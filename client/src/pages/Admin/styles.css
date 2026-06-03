@@ -1,0 +1,593 @@
+/* Đồng bộ với StudentShell / Dashboard / Login TZONE */
+.admin-page {
+  --tz-green: #2eb886;
+  --tz-green-dark: #26a075;
+  --tz-green-mint: #e6f4f1;
+  --tz-green-soft: rgba(46, 184, 134, 0.12);
+  --tz-violet-border: #e9d5ff;
+  --tz-orange-star: #f97316;
+  --tz-blue: #2563eb;
+  --tz-text: #111827;
+  --tz-muted: #6b7280;
+  --tz-border: #e5e7eb;
+  --tz-bg: #fafafa;
+  --layout-max: 1120px;
+
+  min-height: 100vh;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background: var(--tz-bg);
+  color: var(--tz-text);
+  box-sizing: border-box;
+}
+
+.admin-page *,
+.admin-page *::before,
+.admin-page *::after {
+  box-sizing: inherit;
+}
+
+/* —— Header giống vùng điều hướng trang chủ —— */
+.admin-page__header {
+  background: #fff;
+  border-bottom: 1px solid var(--tz-border);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.admin-page__header-inner {
+  max-width: var(--layout-max);
+  margin: 0 auto;
+  padding: 14px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.admin-page__logo {
+  font-size: 1.375rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: var(--tz-green);
+  text-decoration: none;
+}
+
+.admin-page__logo:hover {
+  color: var(--tz-green-dark);
+}
+
+.admin-page__top-nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+  flex: 1;
+}
+
+.admin-page__top-link {
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--tz-muted);
+  text-decoration: none;
+  transition:
+    color 0.15s ease,
+    background 0.15s ease;
+}
+
+.admin-page__top-link:hover {
+  color: var(--tz-text);
+  background: var(--tz-green-soft);
+}
+
+.admin-page__logout {
+  padding: 10px 20px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  font-family: inherit;
+  color: #fff;
+  background: linear-gradient(135deg, var(--tz-green), #1d9a6c);
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(46, 184, 134, 0.35);
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.admin-page__logout:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(46, 184, 134, 0.4);
+}
+
+/* —— Main —— */
+.admin-page__main {
+  max-width: var(--layout-max);
+  margin: 0 auto;
+  padding: 28px 24px 56px;
+}
+
+.admin-page__main--wide {
+  max-width: 100%;
+}
+
+/* Khối chào mừng */
+.admin-page__welcome {
+  position: relative;
+  margin-bottom: 28px;
+  padding: 24px 28px;
+  background: #fff;
+  border: 1px solid rgba(167, 243, 208, 0.55);
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(46, 184, 134, 0.08);
+  overflow: hidden;
+}
+
+.admin-page__welcome::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--tz-green), #5eead4);
+  opacity: 0.9;
+}
+
+.admin-page__kicker {
+  margin: 8px 0 6px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--tz-green);
+}
+
+.admin-page__title-main {
+  margin: 0 0 12px;
+  font-size: clamp(1.5rem, 3vw, 1.85rem);
+  font-weight: 800;
+  line-height: 1.25;
+  color: var(--tz-text);
+}
+
+.admin-page__lead {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.55;
+  color: var(--tz-muted);
+}
+
+.admin-page__lead strong {
+  color: var(--tz-text);
+}
+
+.admin-page__email {
+  font-weight: 700;
+  color: var(--tz-green-dark);
+}
+
+.admin-page__footer-hint {
+  margin: 32px auto 0;
+  max-width: 640px;
+  padding: 14px 20px;
+  font-size: 0.875rem;
+  line-height: 1.55;
+  text-align: center;
+  color: var(--tz-muted);
+  background: rgba(243, 244, 246, 0.8);
+  border-radius: 999px;
+  border: 1px solid var(--tz-border);
+}
+
+.admin-page__footer-hint strong {
+  color: var(--tz-text);
+}
+
+/* Alerts */
+.admin-page__info {
+  margin: 16px 0 0;
+  padding: 12px 16px;
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  color: #166534;
+  background: linear-gradient(135deg, #ecfdf5, #f0fdf4);
+  border: 1px solid #bbf7d0;
+  border-radius: 12px;
+}
+
+.admin-page__err {
+  margin: 12px 0 0;
+  padding: 12px 16px;
+  font-size: 0.9375rem;
+  color: #b91c1c;
+  background: #fef2f2;
+  border-radius: 12px;
+  border: 1px solid #fecaca;
+}
+
+/* Thẻ nội dung — cùng ngôn ngữ với dh-card dashboard */
+.admin-card {
+  position: relative;
+  margin-top: 24px;
+  padding: 24px 24px 26px;
+  background: #fff;
+  border: 1px solid var(--tz-violet-border);
+  border-radius: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  transition:
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.admin-card:hover {
+  box-shadow: 0 12px 32px rgba(91, 33, 182, 0.07);
+}
+
+.admin-card--teachers::before,
+.admin-card--courses::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.028;
+  pointer-events: none;
+  border-radius: 16px;
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0l15 8.66v17.32L30 35l-15-8.66V8.66z' fill='%237c3aed' fill-rule='evenodd'/%3E%3C/svg%3E");
+  background-size: 56px 56px;
+}
+
+.admin-card__head {
+  margin-bottom: 6px;
+}
+
+.admin-card__pill {
+  display: inline-block;
+  margin-bottom: 10px;
+  padding: 5px 12px;
+  font-size: 0.6875rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #fff;
+  background: var(--tz-green);
+  border-radius: 999px;
+  box-shadow: 0 2px 8px rgba(46, 184, 134, 0.25);
+}
+
+.admin-card__pill--violet {
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+  box-shadow: 0 2px 10px rgba(124, 58, 237, 0.25);
+}
+
+.admin-card__title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 800;
+  line-height: 1.35;
+  color: var(--tz-text);
+}
+
+.admin-card__desc {
+  margin: 14px 0 20px;
+  font-size: 0.9375rem;
+  line-height: 1.58;
+  color: var(--tz-muted);
+}
+
+.admin-card__desc strong {
+  color: var(--tz-text);
+}
+
+/* Form */
+.admin-field {
+  display: block;
+  margin-bottom: 16px;
+}
+
+.admin-field__label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--tz-text);
+}
+
+.admin-field__input {
+  width: 100%;
+  max-width: 400px;
+  padding: 11px 14px;
+  font-size: 0.9375rem;
+  font-family: inherit;
+  border: 1px solid var(--tz-border);
+  border-radius: 12px;
+  background: #fff;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.admin-field__input:hover {
+  border-color: #d1d5db;
+}
+
+.admin-field__input:focus {
+  outline: none;
+  border-color: var(--tz-green);
+  box-shadow: 0 0 0 3px var(--tz-green-soft);
+}
+
+.admin-field__hint {
+  display: block;
+  margin: 4px 0 8px;
+  font-size: 0.75rem;
+  line-height: 1.45;
+  color: var(--tz-muted);
+  font-weight: 400;
+}
+
+.admin-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.admin-btn {
+  padding: 10px 20px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  font-family: inherit;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.12s ease,
+    background 0.15s ease;
+}
+
+.admin-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.admin-btn--primary {
+  color: #fff;
+  background: linear-gradient(135deg, var(--tz-green), #1d9a6c);
+  box-shadow: 0 2px 10px rgba(46, 184, 134, 0.3);
+}
+
+.admin-btn--primary:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(46, 184, 134, 0.35);
+}
+
+.admin-btn--ghost {
+  color: var(--tz-text);
+  background: #f9fafb;
+  border: 1px solid var(--tz-border);
+}
+
+.admin-btn--ghost:hover:not(:disabled) {
+  background: #f3f4f6;
+  border-color: #d1d5db;
+}
+
+.admin-btn--danger {
+  color: #fff;
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.25);
+}
+
+.admin-btn--danger:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.admin-btn--sm {
+  padding: 7px 14px;
+  font-size: 0.8125rem;
+}
+
+.admin-subtitle {
+  margin: 8px 0 12px;
+  font-size: 0.9375rem;
+  font-weight: 800;
+  color: var(--tz-text);
+}
+
+.admin-table-wrap {
+  margin-top: 20px;
+  overflow-x: auto;
+  border-radius: 12px;
+  border: 1px solid var(--tz-border);
+}
+
+.admin-table {
+  width: 100%;
+  min-width: 520px;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.admin-table th,
+.admin-table td {
+  padding: 12px 14px;
+  text-align: left;
+  border-bottom: 1px solid var(--tz-border);
+}
+
+.admin-table tr:last-child td {
+  border-bottom: none;
+}
+
+.admin-table th {
+  font-weight: 700;
+  color: var(--tz-muted);
+  background: linear-gradient(180deg, rgba(46, 184, 134, 0.08), rgba(46, 184, 134, 0.04));
+}
+
+.admin-table tbody tr:hover {
+  background: rgba(46, 184, 134, 0.04);
+}
+
+.admin-table__actions {
+  white-space: nowrap;
+}
+
+.admin-table__actions .admin-btn + .admin-btn {
+  margin-left: 8px;
+}
+
+.admin-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: 999px;
+}
+
+.admin-badge--pending {
+  color: #a16207;
+  background: #fef9c3;
+}
+
+.admin-badge--approved {
+  color: #166534;
+  background: #dcfce7;
+}
+
+.admin-badge--rejected {
+  color: #991b1b;
+  background: #fee2e2;
+}
+
+.admin-muted {
+  color: #9ca3af;
+  font-size: 0.8125rem;
+}
+
+.admin-code {
+  font-size: 0.8125rem;
+  padding: 3px 8px;
+  background: #f3f4f6;
+  border-radius: 6px;
+  border: 1px solid var(--tz-border);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+}
+
+/* Form khóa học */
+.admin-course-form {
+  margin-top: 8px;
+}
+
+.admin-course-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 18px 22px;
+  margin-bottom: 18px;
+}
+
+.admin-course-grid--time {
+  max-width: 440px;
+}
+
+.admin-field--wide {
+  grid-column: 1 / -1;
+}
+
+.admin-field__input--full {
+  max-width: none;
+  width: 100%;
+}
+
+.admin-course-inline {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.admin-course-inline .admin-field__input {
+  flex: 1;
+  min-width: 0;
+}
+
+.admin-fieldset {
+  margin: 0 0 18px;
+  padding: 16px 18px;
+  border: 1px solid var(--tz-border);
+  border-radius: 14px;
+  background: linear-gradient(180deg, #fafafa, #fff);
+}
+
+.admin-fieldset legend.admin-field__label {
+  padding: 0 4px;
+}
+
+.admin-day-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 16px;
+  margin-top: 10px;
+}
+
+.admin-day-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  user-select: none;
+  color: var(--tz-text);
+  padding: 6px 4px;
+  border-radius: 8px;
+  transition: background 0.12s ease;
+}
+
+.admin-day-chip:hover {
+  background: var(--tz-green-soft);
+}
+
+.admin-day-chip input {
+  margin: 0;
+  accent-color: var(--tz-green);
+}
+
+.admin-instructor-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+.admin-instructor-row .admin-field__input--full {
+  flex: 1;
+  min-width: 200px;
+}
+
+@media (max-width: 640px) {
+  .admin-page__header-inner {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .admin-page__top-nav {
+    justify-content: flex-start;
+  }
+
+  .admin-page__logout {
+    width: 100%;
+  }
+
+  .admin-page__welcome {
+    padding: 20px;
+  }
+
+  .admin-card {
+    padding: 20px 16px;
+  }
+}

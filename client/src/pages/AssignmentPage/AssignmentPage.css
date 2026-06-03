@@ -1,0 +1,612 @@
+/* Assignment Page - Premium UI Revamp */
+
+.tz-assignment-page {
+  background-color: #f8fafc;
+  min-height: 100vh;
+  font-family: 'Inter', system-ui, sans-serif;
+  padding-bottom: 100px; /* Space for action bar */
+}
+
+.tz-ap-container {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+/* Loading state */
+.tz-ap-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+  color: #64748b;
+  font-size: 1.1rem;
+}
+
+/* Header */
+.tz-ap-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #64748b;
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-bottom: 24px;
+  transition: color 0.2s;
+}
+
+.tz-ap-back:hover {
+  color: #0f172a;
+}
+
+.tz-ap-header {
+  background: white;
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+  margin-bottom: 32px;
+  border: 1px solid #f1f5f9;
+}
+
+.tz-ap-header-meta {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.tz-ap-badge {
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.bg-orange { background: #fff7ed; color: #ea580c; }
+.bg-blue { background: #eff6ff; color: #2563eb; }
+
+.tz-ap-due-date {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #64748b;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.tz-ap-title {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0;
+  line-height: 1.3;
+}
+
+/* -------------------------------------
+   QUIZ MODE
+   ------------------------------------- */
+
+.tz-ap-quiz-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Score Card */
+.tz-ap-score-card {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  background: linear-gradient(135deg, #00a260 0%, #059669 100%);
+  border-radius: 16px;
+  padding: 32px;
+  color: white;
+  margin-bottom: 16px;
+  box-shadow: 0 10px 25px rgba(0, 162, 96, 0.2);
+}
+
+.tz-ap-score-circle {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #00a260;
+  flex-shrink: 0;
+}
+
+.tz-ap-score-number {
+  font-size: 2.5rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.tz-ap-score-max {
+  font-size: 1rem;
+  font-weight: 600;
+  opacity: 0.8;
+}
+
+.tz-ap-score-info h2 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin: 0 0 8px 0;
+}
+
+.tz-ap-score-info p {
+  margin: 0;
+  font-size: 1.05rem;
+  opacity: 0.9;
+  line-height: 1.5;
+}
+
+/* Question Cards */
+.tz-ap-question-card {
+  background: white;
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+  border: 1px solid #e2e8f0;
+  transition: all 0.2s;
+}
+
+.tz-ap-question-card.correct {
+  border-color: #34d399;
+  background: #f0fdf4;
+}
+
+.tz-ap-question-card.wrong {
+  border-color: #f87171;
+  background: #fef2f2;
+}
+
+.tz-ap-q-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.tz-ap-q-num {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.tz-ap-q-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.badge-correct { background: #10b981; color: white; }
+.badge-wrong { background: #ef4444; color: white; }
+
+.tz-ap-q-text {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 24px 0;
+  line-height: 1.5;
+}
+
+/* Options */
+.tz-ap-options-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tz-ap-option-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  background: #f8fafc;
+  border: 2px solid transparent;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tz-ap-option-item:hover:not(.disabled) {
+  background: #f1f5f9;
+}
+
+.tz-ap-radio-wrapper {
+  position: relative;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.tz-ap-radio-wrapper input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.tz-ap-radio-mark {
+  position: absolute;
+  top: 0; left: 0; width: 24px; height: 24px;
+  background-color: transparent;
+  border: 2px solid #cbd5e1;
+  border-radius: 50%;
+  transition: all 0.2s;
+}
+
+.tz-ap-radio-wrapper input:checked ~ .tz-ap-radio-mark {
+  border-color: #00a260;
+  background-color: #00a260;
+}
+
+.tz-ap-radio-mark:after {
+  content: "";
+  position: absolute;
+  display: none;
+  top: 7px; left: 7px;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: white;
+}
+
+.tz-ap-radio-wrapper input:checked ~ .tz-ap-radio-mark:after {
+  display: block;
+}
+
+.tz-ap-opt-text {
+  font-size: 1rem;
+  color: #334155;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+/* Checked styling */
+.tz-ap-option-item:has(input:checked) {
+  background: white;
+  border-color: #00a260;
+  box-shadow: 0 4px 10px rgba(0, 162, 96, 0.1);
+}
+
+.tz-ap-option-item:has(input:checked) .tz-ap-opt-text {
+  font-weight: 600;
+  color: #0f172a;
+}
+
+/* Graded specific styles */
+.tz-ap-option-item.disabled {
+  cursor: default;
+}
+.tz-ap-option-item.correct-opt {
+  background: #d1fae5 !important;
+  border-color: #10b981 !important;
+}
+.tz-ap-option-item.correct-opt .tz-ap-opt-text { color: #065f46; font-weight: 700; }
+.tz-ap-option-item.correct-opt .tz-ap-radio-mark { border-color: #10b981; background: #10b981; }
+
+.tz-ap-option-item.wrong-opt {
+  background: #fee2e2 !important;
+  border-color: #ef4444 !important;
+}
+.tz-ap-option-item.wrong-opt .tz-ap-opt-text { color: #991b1b; font-weight: 700; }
+.tz-ap-option-item.wrong-opt .tz-ap-radio-mark { border-color: #ef4444; background: #ef4444; }
+
+
+.tz-ap-explanation {
+  margin-top: 24px;
+  padding: 16px;
+  background: #f1f5f9;
+  border-radius: 8px;
+  border-left: 4px solid #64748b;
+}
+
+.tz-ap-exp-title {
+  display: block;
+  font-size: 0.95rem;
+  color: #334155;
+  margin-bottom: 8px;
+}
+
+.tz-ap-explanation p {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #4b5563;
+  line-height: 1.5;
+}
+
+
+/* -------------------------------------
+   ESSAY MODE
+   ------------------------------------- */
+
+.tz-ap-essay-form, .tz-ap-essay-result {
+  background: white;
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+  border: 1px solid #e2e8f0;
+}
+
+.tz-ap-instruction {
+  background: #f8fafc;
+  padding: 24px;
+  border-radius: 12px;
+  margin-bottom: 32px;
+  border-left: 4px solid #00a260;
+}
+
+.tz-ap-inst-title {
+  margin: 0 0 12px 0;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.tz-ap-inst-content {
+  font-size: 0.95rem;
+  color: #334155;
+  line-height: 1.6;
+}
+
+.tz-ap-form-group {
+  margin-bottom: 24px;
+}
+
+.tz-ap-form-group label {
+  display: block;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #334155;
+  margin-bottom: 12px;
+}
+
+.tz-ap-textarea {
+  width: 100%;
+  padding: 16px;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  resize: vertical;
+  outline: none;
+  transition: all 0.2s;
+  background: #f8fafc;
+}
+
+.tz-ap-textarea:focus {
+  border-color: #00a260;
+  background: white;
+  box-shadow: 0 0 0 4px rgba(0,162,96,0.1);
+}
+
+.tz-ap-file-upload {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.tz-ap-file-input {
+  display: none;
+}
+
+.tz-ap-file-label {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 8px;
+  background: #f1f5f9;
+  color: #334155;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: 0 !important;
+}
+
+.tz-ap-file-label:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.tz-ap-file-hint {
+  font-size: 0.85rem;
+  color: #64748b;
+}
+
+.tz-ap-selected-file {
+  margin-top: 12px;
+  padding: 12px 16px;
+  background-color: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 8px;
+  color: #047857;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+}
+
+.tz-ap-selected-file strong {
+  color: #065f46;
+  font-weight: 700;
+}
+
+/* Essay Result */
+.tz-ap-status-banner {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 24px;
+  border-radius: 12px;
+  margin-bottom: 32px;
+}
+
+.tz-ap-status-banner.pending { background: #fffbeb; border: 1px solid #fde68a; }
+.tz-ap-status-banner.pending .tz-ap-status-icon svg { fill: #f59e0b; stroke: white; }
+
+.tz-ap-status-banner.graded { background: #f0fdf4; border: 1px solid #bbf7d0; }
+
+.tz-ap-status-text h3 { margin: 0 0 4px 0; font-size: 1.1rem; font-weight: 800; color: #0f172a; }
+.tz-ap-status-text p { margin: 0; font-size: 0.95rem; color: #4b5563; }
+
+
+.tz-ap-grade-card {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 32px;
+  display: flex;
+  gap: 32px;
+}
+
+.tz-ap-grade-score {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding-right: 32px;
+  border-right: 1px solid #e2e8f0;
+}
+
+.tz-ap-grade-score .label { font-size: 0.9rem; font-weight: 700; color: #64748b; text-transform: uppercase; margin-bottom: 8px;}
+.tz-ap-grade-score .value { font-size: 2.5rem; font-weight: 900; color: #00a260; line-height: 1;}
+.tz-ap-grade-score small { font-size: 1rem; color: #94a3b8; }
+
+.tz-ap-grade-comment {
+  flex: 1;
+}
+
+.tz-ap-grade-comment strong { display: block; margin-bottom: 8px; color: #334155; }
+.tz-ap-grade-comment p { margin: 0; color: #0f172a; font-size: 1rem; line-height: 1.5; font-style: italic; }
+
+.tz-ap-submission-view h4 {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 16px 0;
+  border-top: 1px solid #f1f5f9;
+  padding-top: 24px;
+}
+
+.tz-ap-sub-text {
+  background: #f8fafc;
+  padding: 24px;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  color: #334155;
+  white-space: pre-wrap;
+  line-height: 1.6;
+  margin-bottom: 16px;
+  border: 1px solid #e2e8f0;
+}
+
+.tz-ap-sub-file {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #eff6ff;
+  color: #2563eb;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.tz-ap-sub-file:hover {
+  background: #dbeafe;
+}
+
+
+/* -------------------------------------
+   ACTION BAR (STICKY)
+   ------------------------------------- */
+.tz-ap-action-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  border-top: 1px solid #e2e8f0;
+  padding: 16px 0;
+  box-shadow: 0 -4px 15px rgba(0,0,0,0.05);
+  z-index: 100;
+}
+
+.tz-ap-action-content {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tz-ap-action-content span {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #475569;
+}
+
+.tz-ap-btn-submit {
+  background: #00a260;
+  color: white;
+  border: none;
+  padding: 14px 32px;
+  border-radius: 8px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tz-ap-btn-submit:hover:not(:disabled) {
+  background: #008a51;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,162,96,0.2);
+}
+
+.tz-ap-btn-submit:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .tz-ap-score-card {
+    flex-direction: column;
+    text-align: center;
+  }
+  .tz-ap-grade-card {
+    flex-direction: column;
+    gap: 16px;
+  }
+  .tz-ap-grade-score {
+    border-right: none;
+    border-bottom: 1px solid #e2e8f0;
+    padding-right: 0;
+    padding-bottom: 16px;
+  }
+  .tz-ap-action-content {
+    flex-direction: column;
+    gap: 12px;
+    text-align: center;
+  }
+  .tz-ap-btn-submit {
+    width: 100%;
+  }
+}

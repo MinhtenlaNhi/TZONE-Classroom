@@ -1,0 +1,14 @@
+[
+  {
+    "title": "React for Beginners",
+    "price": 499000,
+    "instructor": "Nguyen Van A",
+    "level": "Beginner"
+  },
+  {
+    "title": "Node.js & Express API",
+    "price": 699000,
+    "instructor": "Tran Thi B",
+    "level": "Intermediate"
+  }
+]

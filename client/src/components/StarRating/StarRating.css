@@ -1,0 +1,30 @@
+.star-rating {
+  display: inline-flex;
+  gap: 2px;
+}
+
+.star {
+  color: #cbd5e1;
+  font-size: 1.25rem;
+  transition: color 0.2s;
+  user-select: none;
+}
+
+.star.filled {
+  color: #f59e0b; /* yellow */
+}
+
+.star.interactive {
+  cursor: pointer;
+}
+
+.star.interactive:hover,
+.star.interactive:hover ~ .star {
+  /* Khó làm hover fill CSS thuần nếu cấu trúc đơn giản, nên dùng JS cho hover hoặc CSS đổi chiều. 
+     Tạm thời click fill là đủ, hover color sẽ tự nhiên hơn */
+  color: #fcd34d;
+}
+
+.star.interactive.filled:hover ~ .star {
+  color: #cbd5e1;
+}

@@ -1,0 +1,160 @@
+/* TeacherDashboard - Premium UI */
+
+.tz-td-page {
+  background-color: #fafbfd;
+  min-height: 100vh;
+  font-family: 'Inter', system-ui, sans-serif;
+  padding-bottom: 60px;
+}
+
+.tz-td-container {
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+/* Banner */
+.tz-td-banner {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  border-radius: 20px;
+  padding: 3rem 4rem;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 40px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.15);
+}
+
+.tz-td-banner-content {
+  position: relative;
+  z-index: 2;
+  max-width: 600px;
+}
+
+.tz-td-banner-content h1 {
+  font-size: 2.2rem;
+  font-weight: 800;
+  margin: 0 0 12px 0;
+  letter-spacing: -0.02em;
+}
+
+.tz-td-banner-content p {
+  font-size: 1.1rem;
+  opacity: 0.9;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.tz-td-banner-content strong {
+  color: #34d399; /* Green accent */
+}
+
+.tz-td-banner-graphic {
+  position: absolute;
+  right: 5%;
+  bottom: -20px;
+  width: 250px;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.9;
+}
+
+/* Grid */
+.tz-td-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+}
+
+/* Card */
+.tz-td-card {
+  background: white;
+  border-radius: 16px;
+  padding: 32px;
+  border: 1px solid #e2e8f0;
+  display: flex;
+  gap: 24px;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+}
+
+.tz-td-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 15px 30px rgba(0,0,0,0.08);
+  border-color: #cbd5e1;
+}
+
+.tz-td-icon {
+  width: 70px;
+  height: 70px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.tz-td-icon.green {
+  background: #ecfdf5;
+  color: #10b981;
+}
+
+.tz-td-icon.blue {
+  background: #eff6ff;
+  color: #3b82f6;
+}
+
+.tz-td-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.tz-td-info h2 {
+  margin: 0 0 8px 0;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.tz-td-info p {
+  margin: 0 0 20px 0;
+  font-size: 0.95rem;
+  color: #64748b;
+  line-height: 1.5;
+  flex: 1;
+}
+
+.tz-td-action {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #00a260;
+  display: inline-flex;
+  align-items: center;
+}
+
+.tz-td-card:hover .tz-td-action {
+  text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .tz-td-banner {
+    padding: 2.5rem 2rem;
+  }
+  .tz-td-banner-graphic {
+    display: none;
+  }
+  .tz-td-grid {
+    grid-template-columns: 1fr;
+  }
+  .tz-td-card {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+}

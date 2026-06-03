@@ -1,0 +1,1024 @@
+/* Learning Page - Premium UI Revamp */
+
+.tz-learning-layout {
+  display: flex;
+  height: 100vh;
+  background-color: #f8fafc;
+  font-family: 'Inter', system-ui, sans-serif;
+  overflow: hidden;
+}
+
+/* Loading */
+.tz-learning-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: #f8fafc;
+  color: #64748b;
+  font-size: 1.1rem;
+}
+
+.tz-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #e2e8f0;
+  border-top-color: #00a260;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+@keyframes spin { 100% { transform: rotate(360deg); } }
+
+/* Sidebar */
+.tz-learning-sidebar {
+  width: 340px;
+  background-color: #ffffff;
+  border-right: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  z-index: 10;
+  box-shadow: 2px 0 10px rgba(0,0,0,0.02);
+}
+
+.tz-ls-header {
+  padding: 24px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.tz-ls-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #64748b;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 16px;
+  transition: color 0.2s;
+}
+
+.tz-ls-back:hover {
+  color: #0f172a;
+}
+
+.tz-ls-course-title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 12px 0;
+  line-height: 1.4;
+}
+
+.tz-ls-trial-badge {
+  display: inline-block;
+  background: #fef2f2;
+  color: #ef4444;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.tz-ls-progress-container {
+  background: #f8fafc;
+  padding: 12px;
+  border-radius: 8px;
+}
+
+.tz-ls-progress-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: #475569;
+  margin-bottom: 8px;
+}
+
+.tz-ls-progress-info strong {
+  color: #00a260;
+  font-weight: 800;
+}
+
+.tz-ls-progress-bar {
+  height: 6px;
+  background-color: #e2e8f0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.tz-ls-progress-fill {
+  height: 100%;
+  background-color: #00a260;
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+/* Curriculum Accordion */
+.tz-ls-curriculum {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 0;
+}
+
+.tz-ls-empty {
+  padding: 24px;
+  text-align: center;
+  color: #64748b;
+  font-size: 0.95rem;
+}
+
+.tz-ls-section {
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.tz-ls-section-header {
+  padding: 16px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  background: #fff;
+  transition: background 0.2s;
+}
+
+.tz-ls-section-header:hover {
+  background: #f8fafc;
+}
+
+.tz-ls-section-header.active {
+  background: #f2f9f5;
+}
+
+.tz-ls-section-title {
+  margin: 0 0 4px 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.tz-ls-section-meta {
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+.tz-ls-section-body {
+  display: none;
+  background: #fafafa;
+}
+
+.tz-ls-section-body.open {
+  display: block;
+}
+
+.tz-ls-lesson-item {
+  padding: 12px 24px 12px 32px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border-left: 3px solid transparent;
+}
+
+.tz-ls-lesson-item:hover {
+  background: #f1f5f9;
+}
+
+.tz-ls-lesson-item.active {
+  background: #e6f5ec;
+  border-left-color: #00a260;
+}
+
+.tz-ls-lesson-icon {
+  margin-top: 2px;
+}
+
+.tz-ls-lesson-name {
+  flex: 1;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #334155;
+  line-height: 1.4;
+}
+
+.tz-ls-lesson-item.active .tz-ls-lesson-name {
+  color: #00a260;
+  font-weight: 700;
+}
+
+.tz-ls-preview-tag {
+  background: #e0e7ff;
+  color: #4f46e5;
+  font-size: 0.65rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+/* Bài học bị khóa (chế độ học thử) */
+.tz-ls-lesson-item.locked .tz-ls-lesson-name {
+  color: #94a3b8;
+}
+
+.tz-ls-lesson-item.locked .tz-ls-lesson-icon {
+  color: #cbd5e1;
+}
+
+.tz-ls-lock-tag {
+  display: inline-flex;
+  align-items: center;
+  color: #cbd5e1;
+}
+
+.tz-ls-lock-tag svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* Panel nội dung khi bài học bị khóa */
+.tz-lm-locked-panel {
+  text-align: center;
+  max-width: 520px;
+  margin: 48px auto;
+  padding: 40px 28px;
+  background: #f8fafc;
+  border: 1px dashed #cbd5e1;
+  border-radius: 16px;
+}
+
+.tz-lm-locked-panel-icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fef2f2;
+  color: #ef4444;
+  border-radius: 50%;
+}
+
+.tz-lm-locked-panel-icon svg {
+  width: 28px;
+  height: 28px;
+}
+
+.tz-lm-locked-panel-title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #1e293b;
+  margin-bottom: 10px;
+}
+
+.tz-lm-locked-panel-desc {
+  color: #64748b;
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+
+.tz-lm-locked-panel-btn {
+  display: inline-block;
+  background: #00a260;
+  color: #fff;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.tz-lm-locked-panel-btn:hover {
+  background: #008a52;
+}
+
+.tz-lm-no-link svg {
+  width: 14px;
+  height: 14px;
+  vertical-align: -2px;
+  margin-right: 4px;
+}
+
+/* Main Content */
+.tz-learning-main {
+  flex: 1;
+  overflow-y: auto;
+  position: relative;
+}
+
+.tz-lm-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px;
+}
+
+/* Empty State */
+.tz-lm-empty-state {
+  text-align: center;
+  padding: 100px 20px;
+}
+
+.tz-lm-empty-icon {
+  font-size: 64px;
+  margin-bottom: 24px;
+}
+
+.tz-lm-empty-state h2 {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 12px;
+}
+
+.tz-lm-empty-state p {
+  color: #64748b;
+  font-size: 1.05rem;
+}
+
+/* Lesson Header */
+.tz-lm-lesson-header {
+  margin-bottom: 32px;
+}
+
+.tz-lm-preview-badge {
+  display: inline-block;
+  background: #4f46e5;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.tz-lm-lesson-title {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0;
+  line-height: 1.3;
+}
+
+/* Cards Grid */
+.tz-lm-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+  margin-bottom: 40px;
+}
+
+.tz-lm-card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 24px;
+  display: flex;
+  gap: 20px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+}
+
+.tz-lm-card-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.tz-lm-card-icon.bg-blue { background: #eff6ff; color: #3b82f6; }
+.tz-lm-card-icon.bg-green { background: #e6f5ec; color: #00a260; }
+
+.tz-lm-card-content h3 {
+  margin: 0 0 8px 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.tz-lm-card-content p {
+  margin: 0;
+  color: #4b5563;
+  font-size: 0.95rem;
+}
+
+.tz-lm-btn-meet {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #00a260;
+  color: white;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  text-decoration: none;
+  font-size: 0.95rem;
+  transition: background 0.2s;
+  margin-top: 8px;
+}
+
+.tz-lm-btn-meet:hover {
+  background: #008a51;
+}
+
+.tz-lm-no-link {
+  color: #94a3b8 !important;
+  font-style: italic;
+  margin-top: 8px !important;
+}
+
+/* Sections */
+.tz-lm-section {
+  margin-bottom: 40px;
+}
+
+.tz-lm-section-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 20px 0;
+  border-bottom: 2px solid #f1f5f9;
+  padding-bottom: 12px;
+}
+
+/* Materials */
+.tz-lm-materials-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 16px;
+}
+
+.tz-lm-material-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  padding: 16px;
+  border-radius: 12px;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.tz-lm-material-card:hover {
+  border-color: #00a260;
+  box-shadow: 0 4px 12px rgba(0,162,96,0.1);
+}
+
+.tz-lm-material-icon {
+  width: 40px;
+  height: 40px;
+  background: #f8fafc;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
+}
+
+.tz-lm-material-card:hover .tz-lm-material-icon {
+  background: #e6f5ec;
+  color: #00a260;
+}
+
+.tz-lm-material-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.tz-lm-material-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #0f172a;
+  margin-bottom: 4px;
+}
+
+.tz-lm-material-action {
+  font-size: 0.8rem;
+  color: #00a260;
+  font-weight: 600;
+}
+
+/* Assignments */
+.tz-lm-assignments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.tz-lm-assignment-wrapper {
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  transition: all 0.2s;
+  overflow: hidden;
+}
+
+.tz-lm-assignment-wrapper:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+}
+
+.tz-lm-assignment-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+}
+
+.tz-lm-ass-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.tz-lm-ass-type {
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.tz-lm-ass-type.bg-orange { background: #fff7ed; color: #ea580c; }
+.tz-lm-ass-type.bg-blue { background: #eff6ff; color: #2563eb; }
+
+.tz-lm-ass-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.tz-lm-btn-do-task {
+  background: #f1f5f9;
+  color: #334155;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  text-decoration: none;
+  font-size: 0.95rem;
+  transition: all 0.2s;
+}
+
+.tz-lm-btn-do-task:hover {
+  background: #0f172a;
+  color: white;
+}
+
+.tz-lm-btn-do-task.done {
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #cbd5e1;
+}
+
+.tz-lm-btn-do-task.done:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.tz-lm-ass-status-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #f0fdf4;
+  padding: 12px 24px;
+  border-top: 1px solid #e2e8f0;
+  color: #059669;
+  font-size: 0.95rem;
+}
+
+.tz-lm-ass-status-text strong {
+  font-weight: 700;
+  color: #047857;
+}
+
+/* Complete Button */
+.tz-lm-complete-section {
+  margin-top: 60px;
+  padding-top: 40px;
+  border-top: 1px solid #e2e8f0;
+  text-align: center;
+}
+
+.tz-lm-btn-complete {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: #0f172a;
+  color: white;
+  padding: 16px 32px;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tz-lm-btn-complete:hover {
+  background: #1e293b;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+.tz-lm-btn-complete.completed {
+  background: #e6f5ec;
+  color: #00a260;
+  cursor: default;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Review Box */
+.tz-lm-review-box {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 32px;
+  margin-top: 60px;
+}
+
+.tz-lm-review-header {
+  margin-bottom: 24px;
+}
+
+.tz-lm-review-header h3 {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 8px 0;
+}
+
+.tz-lm-review-header p {
+  color: #64748b;
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.tz-lm-rating-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.tz-lm-rating-label {
+  font-weight: 600;
+  color: #334155;
+}
+
+.tz-lm-textarea {
+  width: 100%;
+  padding: 16px;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.2s;
+  margin-bottom: 24px;
+  background: #f8fafc;
+}
+
+.tz-lm-textarea:focus {
+  border-color: #00a260;
+  background: white;
+}
+
+.tz-lm-review-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.tz-lm-btn-submit {
+  background: #00a260;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.tz-lm-btn-submit:hover:not(:disabled) {
+  background: #008a51;
+}
+
+.tz-lm-btn-submit:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.tz-lm-review-locked {
+  background: #f8fafc;
+  border: 1px dashed #cbd5e1;
+  border-radius: 12px;
+  padding: 32px 24px;
+  text-align: center;
+  color: #64748b;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.tz-lm-locked-icon {
+  font-size: 2.5rem;
+}
+
+.tz-lm-review-locked p {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.tz-lm-review-locked strong {
+  color: #0f172a;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+  .tz-learning-sidebar {
+    width: 280px;
+  }
+  .tz-lm-container {
+    padding: 24px;
+  }
+}
+
+@media (max-width: 768px) {
+  .tz-learning-layout {
+    flex-direction: column;
+  }
+  
+  .tz-learning-sidebar {
+    width: 100%;
+    height: 40vh;
+    border-right: none;
+    border-bottom: 1px solid #e2e8f0;
+  }
+  
+  .tz-learning-main {
+    height: 60vh;
+  }
+  
+  .tz-lm-cards-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Video ghi hình buổi học (xem lại) */
+.tz-lm-recordings {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.tz-lm-recording {
+  background: #0f172a;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #1e293b;
+}
+
+.tz-lm-recording-title {
+  padding: 10px 14px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #e2e8f0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tz-lm-recording-player {
+  display: block;
+  width: 100%;
+  max-height: 480px;
+  background: #000;
+}
+
+/* Banner khi đã hoàn thành 100% khóa học */
+.tz-lm-completed-banner {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  border-radius: 12px;
+  padding: 16px 18px;
+  margin-bottom: 20px;
+}
+.tz-lm-completed-banner strong {
+  display: block;
+  color: #065f46;
+  font-size: 0.98rem;
+}
+.tz-lm-completed-banner span {
+  display: block;
+  color: #047857;
+  font-size: 0.86rem;
+  margin-top: 2px;
+}
+
+/* Nút đánh giá dưới các chương (sidebar) */
+.tz-ls-review-cta {
+  padding: 16px;
+  border-top: 1px solid #e2e8f0;
+}
+.tz-ls-review-btn {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #10b981;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-size: 0.92rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.tz-ls-review-btn:hover {
+  background: #059669;
+}
+.tz-ls-reviewed-note {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #15803d;
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+/* Modal đánh giá */
+.tz-lm-review-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+  animation: tz-lm-fade-in 0.18s ease-out;
+}
+@keyframes tz-lm-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.tz-lm-review-modal {
+  position: relative;
+  background: #fff;
+  border-radius: 18px;
+  padding: 0 28px 28px;
+  width: 100%;
+  max-width: 460px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.28);
+  animation: tz-lm-pop-in 0.2s ease-out;
+}
+@keyframes tz-lm-pop-in {
+  from { opacity: 0; transform: translateY(12px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.tz-lm-review-close {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: #f1f5f9;
+  color: #64748b;
+  border-radius: 50%;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, color 0.2s;
+}
+.tz-lm-review-close:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.tz-lm-review-modal-head {
+  text-align: center;
+  padding: 32px 8px 20px;
+}
+.tz-lm-review-modal-emoji {
+  font-size: 40px;
+  line-height: 1;
+  margin-bottom: 10px;
+}
+.tz-lm-review-modal-head h3 {
+  margin: 0 0 8px;
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+.tz-lm-review-modal-head p {
+  margin: 0;
+  font-size: 0.88rem;
+  color: #64748b;
+  line-height: 1.5;
+}
+
+.tz-lm-rating-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  background: #f8fafc;
+  border: 1px solid #eef2f7;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+.tz-lm-rating-block .tz-lm-rating-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #475569;
+}
+.tz-lm-rating-stars .star {
+  font-size: 2rem;
+}
+
+.tz-lm-review-modal .tz-lm-textarea {
+  width: 100%;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-size: 0.92rem;
+  font-family: inherit;
+  resize: vertical;
+  box-sizing: border-box;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.tz-lm-review-modal .tz-lm-textarea:focus {
+  outline: none;
+  border-color: #10b981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+}
+
+.tz-lm-review-modal .tz-lm-review-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 18px;
+}
+.tz-lm-btn-cancel {
+  background: #f1f5f9;
+  color: #475569;
+  border: none;
+  border-radius: 10px;
+  padding: 11px 22px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.tz-lm-btn-cancel:hover {
+  background: #e2e8f0;
+}
+.tz-lm-review-modal .tz-lm-btn-submit {
+  background: #10b981;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 11px 24px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.tz-lm-review-modal .tz-lm-btn-submit:hover {
+  background: #059669;
+}
+.tz-lm-review-modal .tz-lm-btn-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

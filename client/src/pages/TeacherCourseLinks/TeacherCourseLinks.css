@@ -1,0 +1,316 @@
+/* TeacherCourseLinksPage - Premium UI Revamp */
+
+.tcl-page {
+  background-color: #fafbfd;
+  min-height: 100vh;
+  font-family: 'Inter', system-ui, sans-serif;
+  padding-bottom: 60px;
+}
+
+.tcl-container {
+  max-width: 100%;
+  padding: 40px;
+}
+
+.tcl-card {
+  background: white;
+  border-radius: 20px;
+  border: 1px solid #f1f5f9;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.02);
+  overflow: hidden;
+}
+
+/* Header */
+.tcl-header {
+  display: flex;
+  align-items: center;
+  padding: 40px;
+  gap: 32px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.tcl-header-ill {
+  flex-shrink: 0;
+}
+
+.tcl-header-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.tcl-header-content h1 {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 12px;
+}
+
+.tcl-header-content p {
+  color: #64748b;
+  margin: 0 0 20px;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.tcl-header-content p strong {
+  color: #334155;
+}
+
+.tcl-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: #f0fdf4;
+  padding: 16px 20px;
+  border-radius: 12px;
+  color: #059669;
+}
+
+.tcl-alert svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.tcl-alert span {
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+.tcl-alert strong {
+  color: #047857;
+}
+
+/* Body */
+.tcl-body {
+  display: flex;
+  padding: 40px;
+  gap: 40px;
+}
+
+/* Form Column */
+.tcl-form-col {
+  flex: 1;
+  max-width: 600px;
+}
+
+.tcl-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.tcl-row {
+  display: flex;
+  gap: 20px;
+}
+
+.tcl-row .tcl-field {
+  flex: 1;
+}
+
+.tcl-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tcl-field label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.tcl-input-wrapper {
+  display: flex;
+  align-items: center;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  padding: 0 16px;
+  background: white;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  height: 48px;
+}
+
+.tcl-input-wrapper:focus-within {
+  border-color: #00a260;
+  box-shadow: 0 0 0 3px rgba(0, 162, 96, 0.1);
+}
+
+.tcl-input-wrapper svg:first-child {
+  color: #00a260;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.tcl-input-wrapper select,
+.tcl-input-wrapper input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 0.95rem;
+  color: #334155;
+  height: 100%;
+}
+
+.tcl-input-wrapper select {
+  cursor: pointer;
+  appearance: none;
+}
+
+.tcl-icon-btn {
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
+}
+.tcl-icon-btn:hover {
+  color: #475569;
+}
+
+.tcl-btn-submit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: #00a260;
+  color: white;
+  border: none;
+  padding: 14px;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-top: 8px;
+}
+
+.tcl-btn-submit:hover {
+  background: #008a51;
+}
+
+.tcl-btn-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.tcl-msg {
+  font-size: 0.85rem;
+  padding: 12px;
+  border-radius: 8px;
+  margin: 0;
+}
+.tcl-msg.error {
+  background: #fef2f2;
+  color: #b91c1c;
+}
+.tcl-msg.success {
+  background: #f0fdf4;
+  color: #047857;
+}
+
+.tcl-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 32px;
+  font-weight: 600;
+  color: #00a260;
+  text-decoration: none;
+}
+
+.tcl-back:hover {
+  text-decoration: underline;
+}
+
+/* Info Column */
+.tcl-info-col {
+  width: 320px;
+  background: #f8fafc;
+  border-radius: 16px;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+.tcl-info-col h3 {
+  margin: 0 0 24px;
+  font-size: 1.1rem;
+  color: #0f172a;
+}
+
+.tcl-benefits {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.tcl-benefits li {
+  display: flex;
+  gap: 16px;
+}
+
+.tcl-b-icon {
+  width: 40px;
+  height: 40px;
+  background: #e6f6ee;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #00a260;
+  flex-shrink: 0;
+}
+
+.tcl-b-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tcl-b-text strong {
+  font-size: 0.95rem;
+  color: #1e293b;
+}
+
+.tcl-b-text p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #64748b;
+  line-height: 1.4;
+}
+
+.tcl-ill-footer {
+  margin-top: auto;
+  padding-top: 40px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .tcl-body {
+    flex-direction: column;
+  }
+  .tcl-info-col {
+    width: 100%;
+  }
+}
+@media (max-width: 768px) {
+  .tcl-header {
+    flex-direction: column;
+    text-align: center;
+  }
+  .tcl-row {
+    flex-direction: column;
+  }
+  .tcl-alert {
+    text-align: left;
+  }
+}

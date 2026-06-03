@@ -1,0 +1,32 @@
+/* Phông chữ toàn site — Inter cho nội dung, Montserrat cho tiêu đề (cách điệu nhẹ).
+   Cả hai đã tải trong index.html và hỗ trợ tiếng Việt đầy đủ. */
+:root {
+  --tz-font-sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --tz-font-display: "Montserrat", var(--tz-font-sans);
+}
+
+html,
+body {
+  font-family: var(--tz-font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Tiêu đề cách điệu hơn một chút bằng font display + giãn chữ nhẹ. */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--tz-font-display);
+  letter-spacing: -0.01em;
+}
+
+/* Đồng bộ font cho các phần tử form (mặc định trình duyệt dùng font khác). */
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+}
