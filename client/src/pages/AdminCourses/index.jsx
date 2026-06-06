@@ -1,7 +1,13 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useNavigate, Navigate, Link } from "react-router-dom";
 import { toast } from "react-toastify";
-import { fetchAdminCoursesV2, deleteAdminCourseV2 } from "../../api/adminCoursesApi";
+import {
+  fetchAdminCoursesV2,
+  deleteAdminCourseV2,
+  searchStudentsForEnrollment,
+  fetchCourseEnrollments,
+  addStudentToCourse
+} from "../../api/adminCoursesApi";
 import { fetchDashboardStats } from "../../api/adminApi";
 import { getAuth } from "../../auth/auth";
 import "./AdminCourses.css";
@@ -20,6 +26,14 @@ export default function AdminCoursesPage() {
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
+
+  const [enrollModalCourse, setEnrollModalCourse] = useState(null);
+  const [studentSearch, setStudentSearch] = useState("");
+  const [studentResults, setStudentResults] = useState([]);
+  const [searchingStudents, setSearchingStudents] = useState(false);
+  const [courseEnrollments, setCourseEnrollments] = useState([]);
+  const [loadingEnrollments, setLoadingEnrollments] = useState(false);
+  const [enrollingId, setEnrollingId] = useState(null);
 
   if (!auth || (auth.role !== "admin" && auth.role !== "operation")) {
     return <Navigate to="/" replace />;
@@ -49,6 +63,81 @@ export default function AdminCoursesPage() {
   useEffect(() => {
     loadData();
   }, []);
+
+  const openEnrollModal = async (course) => {
+    setEnrollModalCourse(course);
+    setStudentSearch("");
+    setStudentResults([]);
+    setLoadingEnrollments(true);
+    try {
+      const res = await fetchCourseEnrollments(course._id);
+      if (res.success) {
+        setCourseEnrollments(res.enrollments || []);
+      }
+    } catch {
+      setCourseEnrollments([]);
+    } finally {
+      setLoadingEnrollments(false);
+    }
+  };
+
+  const closeEnrollModal = () => {
+    setEnrollModalCourse(null);
+    setStudentSearch("");
+    setStudentResults([]);
+    setCourseEnrollments([]);
+  };
+
+  const handleStudentSearch = useCallback(async (q) => {
+    const trimmed = q.trim();
+    if (trimmed.length < 2) {
+      setStudentResults([]);
+      return;
+    }
+    setSearchingStudents(true);
+    try {
+      const res = await searchStudentsForEnrollment(trimmed);
+      if (res.success) {
+        const enrolledIds = new Set(
+          courseEnrollments.map((e) => e.user?._id || e.user)
+        );
+        setStudentResults(
+          (res.students || []).filter((s) => !enrolledIds.has(s._id))
+        );
+      }
+    } catch {
+      setStudentResults([]);
+    } finally {
+      setSearchingStudents(false);
+    }
+  }, [courseEnrollments]);
+
+  useEffect(() => {
+    if (!enrollModalCourse) return;
+    const timer = setTimeout(() => handleStudentSearch(studentSearch), 300);
+    return () => clearTimeout(timer);
+  }, [studentSearch, enrollModalCourse, handleStudentSearch]);
+
+  const handleEnrollStudent = async (student) => {
+    if (!enrollModalCourse || enrollingId) return;
+    setEnrollingId(student._id);
+    try {
+      const res = await addStudentToCourse(enrollModalCourse._id, { userId: student._id });
+      if (res.success) {
+        toast.success(res.message || "Đã ghi danh học viên");
+        if (res.enrollment) {
+          setCourseEnrollments((prev) => [res.enrollment, ...prev]);
+        }
+        setStudentResults((prev) => prev.filter((s) => s._id !== student._id));
+      } else {
+        toast.error(res.message || "Không thể ghi danh học viên");
+      }
+    } catch (e) {
+      toast.error(e.message || "Lỗi kết nối máy chủ");
+    } finally {
+      setEnrollingId(null);
+    }
+  };
 
   const handleDelete = async (id, title) => {
     if (!window.confirm(`Bạn có chắc muốn xóa khóa học "${title}"?`)) return;
@@ -303,6 +392,13 @@ export default function AdminCoursesPage() {
                         >
                           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
                         </button>
+                        <button
+                          className="tz-btn-icon-circle tz-bg-green"
+                          title="Thêm học viên"
+                          onClick={() => openEnrollModal(course)}
+                        >
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><line x1="19" y1="8" x2="19" y2="14"></line><line x1="22" y1="11" x2="16" y2="11"></line></svg>
+                        </button>
                         <button className="tz-btn-icon-circle tz-bg-blue" title="Sửa" onClick={() => navigate(`/admin/courses/edit/${course._id}`)}>
                           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
                         </button>
@@ -343,6 +439,80 @@ export default function AdminCoursesPage() {
           </div>
         )}
       </div>
+
+      {enrollModalCourse && (
+        <div className="tz-enroll-modal-overlay" onClick={closeEnrollModal}>
+          <div className="tz-enroll-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="tz-enroll-modal__header">
+              <h3>Thêm học viên vào khóa học</h3>
+              <p className="tz-enroll-modal__course">{enrollModalCourse.title}</p>
+            </div>
+
+            <div className="tz-enroll-modal__search">
+              <label>Tìm học viên (email hoặc tên)</label>
+              <input
+                type="text"
+                placeholder="Nhập ít nhất 2 ký tự..."
+                value={studentSearch}
+                onChange={(e) => setStudentSearch(e.target.value)}
+                autoFocus
+              />
+            </div>
+
+            <div className="tz-enroll-modal__results">
+              {searchingStudents ? (
+                <p className="tz-enroll-modal__hint">Đang tìm kiếm...</p>
+              ) : studentSearch.trim().length >= 2 && studentResults.length === 0 ? (
+                <p className="tz-enroll-modal__hint">Không tìm thấy học viên phù hợp.</p>
+              ) : (
+                studentResults.map((student) => (
+                  <div key={student._id} className="tz-enroll-student-row">
+                    <div>
+                      <strong>{student.name}</strong>
+                      <span>{student.email}</span>
+                    </div>
+                    <button
+                      type="button"
+                      className="tz-enroll-add-btn"
+                      disabled={enrollingId === student._id}
+                      onClick={() => handleEnrollStudent(student)}
+                    >
+                      {enrollingId === student._id ? "Đang thêm..." : "Ghi danh"}
+                    </button>
+                  </div>
+                ))
+              )}
+            </div>
+
+            <div className="tz-enroll-modal__list">
+              <h4>
+                Học viên đã ghi danh
+                {!loadingEnrollments && ` (${courseEnrollments.length})`}
+              </h4>
+              {loadingEnrollments ? (
+                <p className="tz-enroll-modal__hint">Đang tải...</p>
+              ) : courseEnrollments.length === 0 ? (
+                <p className="tz-enroll-modal__hint">Chưa có học viên nào.</p>
+              ) : (
+                <ul>
+                  {courseEnrollments.map((e) => (
+                    <li key={e._id}>
+                      <span>{e.user?.name || "—"}</span>
+                      <small>{e.user?.email}</small>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+
+            <div className="tz-enroll-modal__actions">
+              <button type="button" className="tz-enroll-close-btn" onClick={closeEnrollModal}>
+                Đóng
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

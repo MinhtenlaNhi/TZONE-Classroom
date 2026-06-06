@@ -218,6 +218,156 @@ function buildInvoiceHtml({ customerName, customerEmail, order, courses, appBase
 </html>`;
 }
 
+function buildOrderRejectionHtml({ customerName, customerEmail, order, courses, cancelReason, appBaseUrl }) {
+  const orderCode = String(order._id).slice(-8).toUpperCase();
+  const rejectedAt = formatVnDateTime(order.updatedAt || new Date());
+  const methodLabel = PAYMENT_METHOD_LABELS[order.paymentMethod] || order.paymentMethod;
+  const reasonBlock = cancelReason
+    ? `<div style="margin-top:12px;padding:12px 14px;background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;color:#9a3412;font-size:14px;"><strong>Lý do:</strong> ${escapeHtml(cancelReason)}</div>`
+    : "";
+
+  const itemsHtml = courses
+    .map((c, idx) => {
+      const title = escapeHtml(c.title || "Khóa học");
+      const price = formatVnd(c.priceAtPurchase);
+      return `
+        <tr>
+          <td style="padding:12px 8px;border-bottom:1px solid #e5e7eb;color:#374151;font-size:14px;text-align:center;">${idx + 1}</td>
+          <td style="padding:12px 8px;border-bottom:1px solid #e5e7eb;color:#111827;font-size:14px;font-weight:600;">${title}</td>
+          <td style="padding:12px 8px;border-bottom:1px solid #e5e7eb;color:#111827;font-size:14px;text-align:right;white-space:nowrap;">${price}</td>
+        </tr>`;
+    })
+    .join("");
+
+  const cartUrl = `${appBaseUrl.replace(/\/$/, "")}/cart`;
+
+  return `<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>Đơn hàng không được duyệt #${orderCode}</title>
+</head>
+<body style="margin:0;padding:0;background:#f3f4f6;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#f3f4f6;padding:24px 0;">
+    <tr>
+      <td align="center">
+        <table role="presentation" width="600" cellspacing="0" cellpadding="0" style="max-width:600px;width:100%;background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.08);">
+          <tr>
+            <td style="background:linear-gradient(135deg,#ef4444 0%,#dc2626 100%);padding:32px 32px 24px;color:#ffffff;">
+              <div style="font-size:13px;letter-spacing:2px;text-transform:uppercase;opacity:0.85;">TZONE Toeic</div>
+              <h1 style="margin:8px 0 4px;font-size:24px;font-weight:700;">Đơn hàng chưa được duyệt</h1>
+              <div style="font-size:14px;opacity:0.9;">Ảnh minh chứng thanh toán chưa được chấp nhận</div>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding:24px 32px 0;">
+              <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:14px 16px;color:#991b1b;font-size:14px;line-height:1.6;">
+                <strong>Đơn hàng #${orderCode}</strong> của bạn chưa được duyệt. Vui lòng kiểm tra lại ảnh chuyển khoản (đúng số tiền, đúng nội dung, rõ nét) và thực hiện thanh toán lại nếu cần.
+                ${reasonBlock}
+              </div>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding:24px 32px 0;">
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0">
+                <tr>
+                  <td width="50%" style="padding-right:12px;vertical-align:top;">
+                    <div style="font-size:12px;color:#6b7280;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Mã đơn hàng</div>
+                    <div style="font-size:15px;color:#111827;font-weight:600;">#${orderCode}</div>
+                  </td>
+                  <td width="50%" style="padding-left:12px;vertical-align:top;">
+                    <div style="font-size:12px;color:#6b7280;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Thời gian xử lý</div>
+                    <div style="font-size:15px;color:#111827;font-weight:600;">${rejectedAt}</div>
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="2" style="padding-top:16px;">
+                    <div style="font-size:12px;color:#6b7280;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Học viên</div>
+                    <div style="font-size:15px;color:#111827;font-weight:600;">${escapeHtml(customerName || customerEmail)}</div>
+                    <div style="font-size:13px;color:#6b7280;margin-top:2px;">${escapeHtml(customerEmail)}</div>
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="2" style="padding-top:16px;">
+                    <div style="font-size:12px;color:#6b7280;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Phương thức thanh toán</div>
+                    <div style="font-size:15px;color:#111827;font-weight:600;">${escapeHtml(methodLabel)}</div>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding:24px 32px 0;">
+              <h3 style="margin:0 0 12px;font-size:16px;color:#111827;">Khóa học trong đơn</h3>
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border:1px solid #e5e7eb;border-radius:8px;border-collapse:separate;overflow:hidden;">
+                <thead>
+                  <tr style="background:#f9fafb;">
+                    <th style="padding:10px 8px;text-align:center;font-size:12px;color:#6b7280;width:40px;">#</th>
+                    <th style="padding:10px 8px;text-align:left;font-size:12px;color:#6b7280;">Khóa học</th>
+                    <th style="padding:10px 8px;text-align:right;font-size:12px;color:#6b7280;">Học phí</th>
+                  </tr>
+                </thead>
+                <tbody>${itemsHtml}</tbody>
+                <tfoot>
+                  <tr>
+                    <td colspan="2" style="padding:14px 8px;text-align:right;font-size:14px;font-weight:600;background:#f9fafb;">Tổng cộng</td>
+                    <td style="padding:14px 8px;text-align:right;font-size:18px;color:#dc2626;font-weight:700;background:#f9fafb;">${formatVnd(order.totalAmount)}</td>
+                  </tr>
+                </tfoot>
+              </table>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding:24px 32px;">
+              <a href="${cartUrl}" style="display:inline-block;background:#10b981;color:#ffffff;text-decoration:none;padding:12px 24px;border-radius:8px;font-weight:600;font-size:14px;">Xem giỏ hàng / thanh toán lại →</a>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding:0 32px 24px;">
+              <div style="border-top:1px solid #e5e7eb;padding-top:16px;font-size:12px;color:#6b7280;line-height:1.6;">
+                Nếu bạn cho rằng đây là nhầm lẫn, vui lòng liên hệ bộ phận vận hành TZONE để được hỗ trợ.<br/>
+                <span style="color:#9ca3af;">© ${new Date().getFullYear()} TZONE Toeic</span>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;
+}
+
+function buildOrderRejectionText({ customerName, customerEmail, order, courses, cancelReason }) {
+  const orderCode = String(order._id).slice(-8).toUpperCase();
+  const rejectedAt = formatVnDateTime(order.updatedAt || new Date());
+  const lines = [
+    "TZONE — Đơn hàng chưa được duyệt",
+    "================================",
+    `Mã đơn hàng: #${orderCode}`,
+    `Thời gian xử lý: ${rejectedAt}`,
+    `Học viên: ${customerName || customerEmail}`,
+    `Email: ${customerEmail}`,
+    "",
+    "Ảnh minh chứng thanh toán chưa được chấp nhận. Vui lòng kiểm tra lại và thanh toán lại nếu cần.",
+    ""
+  ];
+  if (cancelReason) {
+    lines.push(`Lý do: ${cancelReason}`, "");
+  }
+  lines.push("Khóa học trong đơn:");
+  courses.forEach((c, idx) => {
+    lines.push(`  ${idx + 1}. ${c.title || "Khóa học"} — ${formatVnd(c.priceAtPurchase)}`);
+  });
+  lines.push("", `Tổng cộng: ${formatVnd(order.totalAmount)}`);
+  return lines.join("\n");
+}
+
 function buildInvoiceText({ customerName, customerEmail, order, courses }) {
   const orderCode = String(order._id).slice(-8).toUpperCase();
   const paidAt = formatVnDateTime(order.updatedAt || new Date());
@@ -528,6 +678,23 @@ async function sendResetPasswordEmail(to, resetUrl) {
  *   - order: { _id, totalAmount, paymentMethod, updatedAt }
  *   - courses: Array<{ title, instructor, priceAtPurchase }>
  */
+/**
+ * Gửi email thông báo đơn hàng bị từ chối (minh chứng không được duyệt).
+ * @param {string} to Email người nhận.
+ * @param {object} payload { customerName, order, courses, cancelReason, appBaseUrl }
+ */
+async function sendOrderRejectionEmail(to, payload) {
+  const appBaseUrl =
+    payload.appBaseUrl || process.env.APP_URL || process.env.RENDER_EXTERNAL_URL || "http://localhost:5173";
+  const orderCode = String(payload.order._id).slice(-8).toUpperCase();
+  const subject = `TZONE Toeic — Đơn hàng #${orderCode} chưa được duyệt`;
+  const html = buildOrderRejectionHtml({ ...payload, customerEmail: to, appBaseUrl });
+  const text = buildOrderRejectionText({ ...payload, customerEmail: to });
+
+  console.log(`[mailer] Gửi thông báo từ chối đơn → ${to} | providers: ${getActiveProviders().join(", ") || "none"}`);
+  return sendEmail({ to, subject, html, text });
+}
+
 async function sendOrderConfirmationEmail(to, payload) {
   const appBaseUrl =
     payload.appBaseUrl || process.env.APP_URL || process.env.RENDER_EXTERNAL_URL || "http://localhost:5173";
@@ -558,6 +725,7 @@ async function sendCourseCertificateEmail(to, payload) {
 
 module.exports = {
   sendResetPasswordEmail,
+  sendOrderRejectionEmail,
   sendOrderConfirmationEmail,
   sendCourseCertificateEmail,
   sendEmail,

@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 import { fetchAdminOrders, confirmOrder, cancelOrder } from "../../api/ordersApi";
 import { 
   FiShoppingCart, FiClock, FiCheckCircle, FiXCircle, 
-  FiSearch, FiCalendar, FiCheck, FiX, FiImage, FiTrash2
+  FiCalendar, FiCheck, FiX
 } from "react-icons/fi";
 import "./AdminOrders.css";
 import { apiPath } from "../../api/base";
@@ -45,12 +45,15 @@ export default function AdminOrdersPage() {
     loadOrders();
   }, [page, statusFilter]);
 
-  const handleConfirm = async (orderId) => {
-    if (!window.confirm("Xác nhận đã nhận tiền và duyệt đơn hàng này?")) return;
+  const handleConfirm = async (orderId, isReapprove = false) => {
+    const msg = isReapprove
+      ? "Xác nhận duyệt lại đơn hàng này? Học viên sẽ được ghi danh vào khóa học."
+      : "Xác nhận đã nhận tiền và duyệt đơn hàng này?";
+    if (!window.confirm(msg)) return;
     try {
       const res = await confirmOrder(orderId);
       if (res.success) {
-        toast.success("Duyệt đơn hàng thành công!");
+        toast.success(res.message || "Duyệt đơn hàng thành công!");
         loadOrders();
       } else {
         toast.error(res.message);
@@ -61,13 +64,13 @@ export default function AdminOrdersPage() {
   };
 
   const handleCancel = async (orderId) => {
-    const reason = window.prompt("Nhập lý do hủy (Tùy chọn):");
-    if (reason === null) return; // cancel prompt
+    const reason = window.prompt("Nhập lý do từ chối minh chứng (tùy chọn — sẽ gửi trong email cho học viên):");
+    if (reason === null) return;
 
     try {
       const res = await cancelOrder(orderId, reason);
       if (res.success) {
-        toast.success("Đã hủy đơn hàng");
+        toast.success(res.message || "Đã từ chối đơn hàng");
         loadOrders();
       } else {
         toast.error(res.message);
@@ -236,9 +239,16 @@ export default function AdminOrdersPage() {
                               <FiCheck /> Duyệt
                             </button>
                             <button className="ao-btn ao-btn-reject" onClick={() => handleCancel(o._id)}>
-                              <FiTrash2 /> Hủy
+                              <FiX /> Từ chối
                             </button>
                           </>
+                        ) : o.status === "cancelled" ? (
+                          <button
+                            className="ao-btn ao-btn-approve"
+                            onClick={() => handleConfirm(o._id, true)}
+                          >
+                            <FiCheck /> Duyệt lại
+                          </button>
                         ) : (
                           <span className="ao-action-none">-</span>
                         )}

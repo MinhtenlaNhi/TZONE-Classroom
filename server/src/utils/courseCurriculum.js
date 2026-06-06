@@ -2,12 +2,14 @@ const Category = require("../models/Category");
 const Lesson = require("../models/Lesson");
 const tapSuCurriculum = require("../data/tapSuCurriculum");
 const toeicACurriculum = require("../data/toeicACurriculum");
+const toeicBCurriculum = require("../data/toeicBCurriculum");
 const toeicSwCurriculum = require("../data/toeicSwCurriculum");
 
 /** Map slug danh mục -> template lộ trình bài học cố định. */
 const CURRICULUM_BY_SLUG = {
   "tap-su": tapSuCurriculum,
   "toeic-a": toeicACurriculum,
+  "toeic-b": toeicBCurriculum,
   "toeic-sw": toeicSwCurriculum
 };
 

@@ -118,10 +118,36 @@ async function fulfillPaidEnrollment(Enrollment, { userId, courseId, orderId }) 
   });
 }
 
+/** Ghi danh thủ công bởi admin/vận hành — không qua đơn hàng. */
+async function manualEnrollStudent(Enrollment, { userId, courseId }) {
+  await Enrollment.deleteOne({ user: userId, course: courseId, isTrial: true });
+
+  const existing = await Enrollment.findOne({
+    user: userId,
+    course: courseId,
+    isTrial: false
+  });
+
+  if (existing) {
+    return { ok: false, message: "Học viên đã được ghi danh vào khóa học này." };
+  }
+
+  const enrollment = await Enrollment.create({
+    user: userId,
+    course: courseId,
+    order: null,
+    isTrial: false,
+    progress: 0
+  });
+
+  return { ok: true, enrollment };
+}
+
 module.exports = {
   COL_LABELS,
   checkCoursePurchaseEligibility,
   fulfillPaidEnrollment,
+  manualEnrollStudent,
   isCourseEnded,
   isEnrollmentCompleted,
   getCourseLastSessionDate

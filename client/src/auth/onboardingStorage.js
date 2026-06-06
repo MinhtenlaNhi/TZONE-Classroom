@@ -56,3 +56,16 @@ export function markOnboardingComplete(email) {
   prev.add(e);
   localStorage.setItem(ONBOARDED_EMAILS_KEY, JSON.stringify([...prev]));
 }
+
+/** Sau đăng nhập/đăng ký: bỏ qua onboarding, điều hướng theo role. */
+export function navigateAfterAuth(navigate, { email, role }) {
+  markOnboardingComplete(email);
+  clearPendingRegisterRole();
+  if (role === "admin" || role === "operation") {
+    navigate("/admin", { replace: true });
+  } else if (role === "teacher") {
+    navigate("/teacher/dashboard", { replace: true });
+  } else {
+    navigate("/dashboard", { replace: true });
+  }
+}

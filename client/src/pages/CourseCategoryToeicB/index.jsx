@@ -24,26 +24,58 @@ function IconClock() {
 
 const syllabusItems = [
   {
-    id: "p1",
-    title: "Buổi 1 – Buổi 3: Luyện tập Part 1",
-    bullets: ["Tranh tả người", "Tranh tả vật", "Tranh hỗn hợp"]
-  },
-  { id: "p2", title: "Buổi 4 – 8: Luyện tập Part 2", detail: null },
-  {
-    id: "p3",
-    title: "Buổi 9 – 19: Luyện tập Part 3 + Ngữ pháp Part 5 – 6",
-    detail: null
+    id: "ch1",
+    title: "Buổi 1 – 3: Chương 1 — Luyện tập Part 1+2",
+    bullets: [
+      "Bài 1: Luyện tập Part 1",
+      "Bài 2: Part 2 nâng cao (1)",
+      "Bài 3: Part 2 nâng cao (2)"
+    ]
   },
   {
-    id: "p4",
-    title: "Buổi 20 – 26: Luyện tập Part 4 + Ngữ pháp Part 5–6 + Luyện đề",
-    detail: null
+    id: "ch2",
+    title: "Buổi 4 – 8: Chương 2 — Luyện tập Part 3+4",
+    bullets: [
+      "Bài 1: Ôn luyện Part 3+4",
+      "Bài 2: Các dạng câu hỏi nâng cao (1)",
+      "Bài 3: Các dạng câu hỏi nâng cao (2)",
+      "Bài 4: Luyện và chữa đề Listening (1)",
+      "Bài 5: Luyện và chữa đề Listening (2)"
+    ]
   },
-  { id: "final", title: "Buổi 27 – Final test", detail: null }
+  {
+    id: "ch3",
+    title: "Buổi 9 – 19: Chương 3 — Luyện tập Part 5+6+7",
+    bullets: [
+      "Bài 1: Ôn luyện ngữ pháp (1)",
+      "Bài 2: Ôn luyện ngữ pháp (2)",
+      "Bài 3: Các dạng câu hỏi nâng cao (1)",
+      "Bài 4: Các dạng câu hỏi nâng cao (2)",
+      "Bài 5: Luyện tập Part 5",
+      "Bài 6: Chủ đề nâng cao Part 6+7 (1)",
+      "Bài 7: Chủ đề nâng cao Part 6+7 (2)",
+      "Bài 8: Luyện và chữa đề Reading (1)",
+      "Bài 9: Luyện và chữa đề Reading (2)",
+      "Bài 10: Luyện và chữa đề Reading (3)",
+      "Bài 11: Luyện và chữa đề Reading (4)"
+    ]
+  },
+  {
+    id: "ch4",
+    title: "Buổi 20 – 25: Chương 4 — Luyện và chữa đề · Kiểm tra cuối khóa",
+    bullets: [
+      "Bài 1: Luyện và chữa đề (1)",
+      "Bài 2: Luyện và chữa đề (2)",
+      "Bài 3: Luyện và chữa đề (3)",
+      "Bài 4: Luyện và chữa đề (4)",
+      "Bài 5: Luyện và chữa đề (5)",
+      "Bài 6: Bài kiểm tra cuối khóa"
+    ]
+  }
 ];
 
 export default function CourseCategoryToeicBPage({ embedded = false }) {
-  const [openId, setOpenId] = useState("p1");
+  const [openId, setOpenId] = useState("ch1");
 
   return (
     <div className={embedded ? "tap-su-page tap-su-page--embedded" : "tap-su-page"}>
@@ -60,16 +92,20 @@ export default function CourseCategoryToeicBPage({ embedded = false }) {
             </p>
             <p className="tap-su-card__text">
               Khóa tập trung nâng cao <strong>Reading &amp; từ vựng</strong>, đồng thời củng cố và
-              phát triển đồng đều <strong>bốn kỹ năng</strong> theo định dạng đề thi.
+              phát triển đồng đều <strong>bốn kỹ năng</strong> theo định dạng đề thi. Mục tiêu đầu ra{" "}
+              <strong>650–800+</strong>.
+            </p>
+            <p className="tap-su-card__text" style={{ marginTop: 12 }}>
+              Học phí: <strong>3.500.000đ</strong>
             </p>
           </article>
 
           <article className="tap-su-card">
-            <p className="tap-su-card__stat">Thời lượng: 27 buổi</p>
+            <p className="tap-su-card__stat">Thời lượng: 25 buổi</p>
             <ul className="tap-su-card__list">
-              <li>Tập trung phần Reading</li>
-              <li>Tập trung mở rộng từ vựng</li>
-              <li>Hoàn thiện toàn diện các kỹ năng</li>
+              <li>Tập trung phần Reading &amp; từ vựng nâng cao</li>
+              <li>Luyện đề Listening &amp; Reading theo chương</li>
+              <li>Kết thúc bằng bài kiểm tra cuối khóa</li>
             </ul>
           </article>
 
@@ -123,19 +159,11 @@ export default function CourseCategoryToeicBPage({ embedded = false }) {
                   </button>
                   {expanded ? (
                     <div className="tap-su-accordion__panel">
-                      {item.bullets ? (
-                        <ul className="tap-su-accordion__bullets">
-                          {item.bullets.map((line) => (
-                            <li key={line}>{line}</li>
-                          ))}
-                        </ul>
-                      ) : item.detail ? (
-                        item.detail
-                      ) : (
-                        <span className="tap-su-accordion__placeholder">
-                          Chi tiết theo giáo trình từng buổi học.
-                        </span>
-                      )}
+                      <ul className="tap-su-accordion__bullets">
+                        {item.bullets.map((line) => (
+                          <li key={line}>{line}</li>
+                        ))}
+                      </ul>
                     </div>
                   ) : null}
                 </div>

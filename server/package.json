@@ -8,8 +8,7 @@
     "test:db": "node scripts/test-mongo.js",
     "seed": "node scripts/seed.js",
     "seed:reset": "node scripts/seed.js --reset",
-    "test:email": "node scripts/test-email.js",
-    "migrate:users": "node scripts/migrate-users.js"
+    "test:email": "node scripts/test-email.js"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",

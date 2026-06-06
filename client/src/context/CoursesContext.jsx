@@ -1,10 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { apiPath } from "../api/base";
-import {
-  COURSES as STATIC_COURSES,
-  getCourseByIdFromList,
-  getCoursesByIdsFromList
-} from "../data/studentCourses";
 
 const CoursesContext = createContext(null);
 
@@ -39,8 +34,18 @@ function normalizeRemoteCourse(doc) {
   };
 }
 
+function getCourseByIdFromList(list, id) {
+  if (id == null || id === "") return null;
+  const s = String(id);
+  return list.find((c) => String(c.id) === s) || null;
+}
+
+function getCoursesByIdsFromList(list, ids) {
+  return ids.map((id) => getCourseByIdFromList(list, id)).filter(Boolean);
+}
+
 export function CoursesProvider({ children }) {
-  const [remote, setRemote] = useState([]);
+  const [courses, setCourses] = useState([]);
   const [coursesLoaded, setCoursesLoaded] = useState(false);
 
   const refreshCourses = useCallback(async () => {
@@ -49,10 +54,10 @@ export function CoursesProvider({ children }) {
       const data = await res.json().catch(() => ({}));
       if (res.ok && data.success && Array.isArray(data.courses)) {
         const list = data.courses.map(normalizeRemoteCourse).filter(Boolean);
-        setRemote(list);
+        setCourses(list);
       }
     } catch {
-      /* giữ remote cũ */
+      /* giữ danh sách cũ */
     } finally {
       setCoursesLoaded(true);
     }
@@ -69,12 +74,6 @@ export function CoursesProvider({ children }) {
     window.addEventListener("tzone-courses-changed", onChanged);
     return () => window.removeEventListener("tzone-courses-changed", onChanged);
   }, [refreshCourses]);
-
-  const courses = useMemo(() => {
-    const remoteIds = new Set(remote.map((c) => String(c.id)));
-    const extraStatic = STATIC_COURSES.filter((c) => !remoteIds.has(String(c.id)));
-    return [...remote, ...extraStatic];
-  }, [remote]);
 
   const value = useMemo(
     () => ({

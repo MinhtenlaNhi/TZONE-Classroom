@@ -6,7 +6,7 @@ const User = require("../models/User");
 const { authMiddleware } = require("../middlewares/auth");
 const { isStaff } = require("../middlewares/role");
 const { checkCoursePurchaseEligibility, fulfillPaidEnrollment } = require("../utils/coursePurchase");
-const { sendOrderConfirmationEmail } = require("../utils/mailer");
+const { sendOrderConfirmationEmail, sendOrderRejectionEmail } = require("../utils/mailer");
 
 function getAppBaseUrl(req) {
   const configured =
@@ -87,8 +87,13 @@ router.put("/:id/confirm", authMiddleware, isStaff, async (req, res) => {
     if (order.status === "paid") {
       return res.status(400).json({ success: false, message: "Đơn hàng đã được duyệt trước đó." });
     }
+    if (order.status !== "pending" && order.status !== "cancelled") {
+      return res.status(400).json({ success: false, message: "Trạng thái đơn hàng không hợp lệ để duyệt." });
+    }
 
+    const wasReapproved = order.status === "cancelled";
     order.status = "paid";
+    order.cancelReason = undefined;
     await order.save();
 
     const courseInfos = [];
@@ -132,14 +137,18 @@ router.put("/:id/confirm", authMiddleware, isStaff, async (req, res) => {
       console.error("[adminOrders] Lỗi khi chuẩn bị email hóa đơn:", emailErr.message);
     }
 
-    return res.json({ success: true, message: "Đã duyệt đơn hàng thành công.", order });
+    return res.json({
+      success: true,
+      message: wasReapproved ? "Đã duyệt lại đơn hàng thành công." : "Đã duyệt đơn hàng thành công.",
+      order
+    });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ success: false, message: "Lỗi máy chủ." });
   }
 });
 
-// 4. Hủy đơn hàng
+// 4. Hủy / từ chối đơn hàng (minh chứng không hợp lệ)
 router.put("/:id/cancel", authMiddleware, isStaff, async (req, res) => {
   try {
     const { reason } = req.body;
@@ -149,12 +158,42 @@ router.put("/:id/cancel", authMiddleware, isStaff, async (req, res) => {
     if (order.status === "paid") {
       return res.status(400).json({ success: false, message: "Đơn hàng đã thanh toán, không thể hủy." });
     }
+    if (order.status === "cancelled") {
+      return res.status(400).json({ success: false, message: "Đơn hàng đã bị từ chối trước đó." });
+    }
 
     order.status = "cancelled";
     if (reason) order.cancelReason = reason;
     await order.save();
 
-    return res.json({ success: true, message: "Đã hủy đơn hàng.", order });
+    try {
+      const user = await User.findById(order.user).select("name email").lean();
+      const courseInfos = [];
+      for (const item of order.items) {
+        const course = await Course.findById(item.courseRef).select("title").lean();
+        if (course) {
+          courseInfos.push({
+            title: course.title,
+            priceAtPurchase: item.priceAtPurchase
+          });
+        }
+      }
+      if (user?.email && courseInfos.length) {
+        sendOrderRejectionEmail(user.email, {
+          customerName: user.name,
+          order,
+          courses: courseInfos,
+          cancelReason: reason || "",
+          appBaseUrl: getAppBaseUrl(req)
+        }).catch((emailErr) => {
+          console.error("[adminOrders] Gửi email từ chối đơn thất bại:", emailErr.message);
+        });
+      }
+    } catch (emailErr) {
+      console.error("[adminOrders] Lỗi khi chuẩn bị email từ chối đơn:", emailErr.message);
+    }
+
+    return res.json({ success: true, message: "Đã từ chối đơn hàng và gửi thông báo cho học viên.", order });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ success: false, message: "Lỗi máy chủ." });

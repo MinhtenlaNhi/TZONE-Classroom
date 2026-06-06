@@ -52,3 +52,19 @@ export async function deleteAdminCourseV2(id) {
     method: "DELETE"
   });
 }
+
+export async function searchStudentsForEnrollment(search) {
+  const query = new URLSearchParams({ search });
+  return apiFetchJson(apiPath(`/api/admin/v2/students/search?${query.toString()}`));
+}
+
+export async function fetchCourseEnrollments(courseId) {
+  return apiFetchJson(apiPath(`/api/admin/v2/courses/${courseId}/enrollments`));
+}
+
+export async function addStudentToCourse(courseId, { userId, email }) {
+  return apiFetchJson(apiPath(`/api/admin/v2/courses/${courseId}/enrollments`), {
+    method: "POST",
+    body: JSON.stringify(userId ? { userId } : { email })
+  });
+}

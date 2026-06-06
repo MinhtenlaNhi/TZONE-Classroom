@@ -69,10 +69,8 @@ export default function PublicFooter() {
 
           <div className="tz-footer-col">
             <h4>HỖ TRỢ</h4>
-            <Link to="/faq">Hướng dẫn học</Link>
-            <Link to="/faq">Câu hỏi thường gặp</Link>
-            <Link to="/policy">Chính sách bảo mật</Link>
-            <Link to="/terms">Điều khoản sử dụng</Link>
+            <Link to="/ho-tro-yeu-cau">Hỗ trợ học viên</Link>
+            <Link to="/dieu-khoan-bao-hanh">Điều khoản bảo lưu</Link>
           </div>
 
           <div className="tz-footer-col tz-col-contact">

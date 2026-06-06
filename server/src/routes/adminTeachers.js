@@ -1,4 +1,5 @@
 const express = require("express");
+const bcrypt = require("bcryptjs");
 const User = require("../models/User");
 const { isDbReady } = require("../db");
 const { authMiddleware } = require("../middlewares/auth");
@@ -15,40 +16,26 @@ function dbUnavailable(res) {
   return res.status(503).json({ success: false, message: "Cơ sở dữ liệu chưa sẵn sàng." });
 }
 
-// LƯU Ý: Router này được mount tại "/api/admin" (cùng cấp với orders/reviews/categories...).
-// Không dùng router.use(isAdmin) chung vì nó sẽ chặn TẤT CẢ request /api/admin/* (kể cả các
-// route thuộc router khác như đơn hàng, đánh giá) trước khi chúng kịp đi tới đúng router.
-// Vì vậy phải gắn middleware bảo vệ cho TỪNG route cụ thể bên dưới.
+function toTeacherDto(user) {
+  return {
+    _id: user._id,
+    email: user.email,
+    name: user.name,
+    phone: user.phone || "",
+    teacherCode: user.teacherCode || "",
+    isBlocked: Boolean(user.isBlocked),
+    createdAt: user.createdAt,
+    updatedAt: user.updatedAt
+  };
+}
 
-/** Danh sách giáo viên chờ duyệt */
-router.get("/pending-teachers", authMiddleware, isAdmin, async (req, res) => {
-  if (!isDbReady()) return dbUnavailable(res);
-  try {
-    const rows = await User.find({
-      role: "teacher",
-      $or: [
-        { teacherApprovalStatus: "pending" },
-        { teacherApprovalStatus: null },
-        { teacherApprovalStatus: { $exists: false } }
-      ]
-    })
-      .sort({ createdAt: 1 })
-      .select("email name teacherApprovalStatus createdAt")
-      .lean();
-    return res.json({ success: true, teachers: rows });
-  } catch (e) {
-    console.error(e);
-    return res.status(500).json({ success: false, message: "Lỗi máy chủ." });
-  }
-});
-
-/** Tất cả giáo viên (để admin xem trạng thái) */
+/** Danh sách giáo viên */
 router.get("/teachers", authMiddleware, isAdmin, async (req, res) => {
   if (!isDbReady()) return dbUnavailable(res);
   try {
     const rows = await User.find({ role: "teacher" })
       .sort({ updatedAt: -1 })
-      .select("email name teacherApprovalStatus teacherCode createdAt updatedAt")
+      .select("email name phone teacherCode isBlocked createdAt updatedAt")
       .lean();
     return res.json({ success: true, teachers: rows });
   } catch (e) {
@@ -57,45 +44,93 @@ router.get("/teachers", authMiddleware, isAdmin, async (req, res) => {
   }
 });
 
-router.post("/approve-teacher", authMiddleware, isAdmin, async (req, res) => {
+/** Tạo tài khoản giáo viên (admin) */
+router.post("/teachers", authMiddleware, isAdmin, async (req, res) => {
   if (!isDbReady()) return dbUnavailable(res);
   try {
-    const teacherEmail = normalizeEmail(req.body?.teacherEmail);
-    if (!teacherEmail) {
-      return res.status(400).json({ success: false, message: "Thiếu email giáo viên." });
+    const { name, email, password, phone } = req.body || {};
+    const em = normalizeEmail(email);
+    const nameTrim = String(name || "").trim();
+    const phoneTrim = String(phone || "").trim();
+
+    if (!em || !nameTrim || !password) {
+      return res.status(400).json({ success: false, message: "Vui lòng nhập đủ tên, email và mật khẩu." });
     }
-    const user = await User.findOne({ email: teacherEmail, role: "teacher" });
-    if (!user) {
-      return res.status(404).json({ success: false, message: "Không tìm thấy tài khoản giáo viên." });
+    if (password.length < 6) {
+      return res.status(400).json({ success: false, message: "Mật khẩu cần ít nhất 6 ký tự." });
     }
-    user.teacherApprovalStatus = "approved";
+
+    const existing = await User.findOne({ email: em });
+    if (existing) {
+      return res.status(409).json({ success: false, message: "Email đã tồn tại." });
+    }
+
+    const passwordHash = await bcrypt.hash(password, 10);
+    const user = await User.create({
+      email: em,
+      name: nameTrim,
+      phone: phoneTrim,
+      passwordHash,
+      authProvider: "local",
+      role: "teacher",
+      teacherApprovalStatus: "approved"
+    });
     await ensureTeacherHasCode(user);
     await user.save();
-    return res.json({
+
+    return res.status(201).json({
       success: true,
-      message: "Đã phê duyệt tài khoản giáo viên.",
-      teacherCode: user.teacherCode || null
+      message: "Đã tạo tài khoản giáo viên.",
+      teacher: toTeacherDto(user)
     });
   } catch (e) {
     console.error(e);
+    if (e.code === 11000) {
+      return res.status(409).json({ success: false, message: "Email hoặc mã giáo viên đã tồn tại." });
+    }
     return res.status(500).json({ success: false, message: "Lỗi máy chủ." });
   }
 });
 
-router.post("/reject-teacher", authMiddleware, isAdmin, async (req, res) => {
+/** Cập nhật giáo viên */
+router.put("/teachers/:id", authMiddleware, isAdmin, async (req, res) => {
   if (!isDbReady()) return dbUnavailable(res);
   try {
-    const teacherEmail = normalizeEmail(req.body?.teacherEmail);
-    if (!teacherEmail) {
-      return res.status(400).json({ success: false, message: "Thiếu email giáo viên." });
-    }
-    const user = await User.findOne({ email: teacherEmail, role: "teacher" });
+    const { name, email, password, phone } = req.body || {};
+    const user = await User.findOne({ _id: req.params.id, role: "teacher" });
     if (!user) {
-      return res.status(404).json({ success: false, message: "Không tìm thấy tài khoản giáo viên." });
+      return res.status(404).json({ success: false, message: "Không tìm thấy giáo viên." });
     }
-    user.teacherApprovalStatus = "rejected";
+
+    if (email) {
+      const em = normalizeEmail(email);
+      if (em !== user.email) {
+        const dup = await User.findOne({ email: em });
+        if (dup) {
+          return res.status(409).json({ success: false, message: "Email đã được sử dụng." });
+        }
+        user.email = em;
+      }
+    }
+
+    if (name) user.name = String(name).trim();
+    if (phone !== undefined) user.phone = String(phone || "").trim();
+    if (password) {
+      if (password.length < 6) {
+        return res.status(400).json({ success: false, message: "Mật khẩu cần ít nhất 6 ký tự." });
+      }
+      user.passwordHash = await bcrypt.hash(password, 10);
+    }
+
+    user.teacherApprovalStatus = "approved";
+    await ensureTeacherHasCode(user);
     await user.save();
-    return res.json({ success: true, message: "Đã từ chối tài khoản giáo viên." });
+
+    return res.json({
+      success: true,
+      message: "Đã cập nhật giáo viên.",
+      teacher: toTeacherDto(user)
+    });
   } catch (e) {
     console.error(e);
     return res.status(500).json({ success: false, message: "Lỗi máy chủ." });

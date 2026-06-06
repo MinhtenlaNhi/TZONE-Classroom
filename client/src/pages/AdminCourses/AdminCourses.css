@@ -393,6 +393,9 @@
 .tz-btn-icon-circle.tz-bg-blue { color: #3b82f6; }
 .tz-btn-icon-circle.tz-bg-blue:hover { background-color: #eff6ff; border-color: #bfdbfe; }
 
+.tz-btn-icon-circle.tz-bg-green { color: #10b981; }
+.tz-btn-icon-circle.tz-bg-green:hover { background-color: #ecfdf5; border-color: #a7f3d0; }
+
 .tz-btn-icon-circle.tz-bg-red { color: #ef4444; }
 .tz-btn-icon-circle.tz-bg-red:hover { background-color: #fef2f2; border-color: #fecaca; }
 
@@ -494,4 +497,172 @@
     flex-direction: column;
     gap: 1rem;
   }
+}
+
+/* Enroll student modal */
+.tz-enroll-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.tz-enroll-modal {
+  background: #fff;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 520px;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  padding: 1.5rem;
+}
+
+.tz-enroll-modal__header h3 {
+  margin: 0 0 0.35rem;
+  font-size: 1.2rem;
+  color: #0f172a;
+}
+
+.tz-enroll-modal__course {
+  margin: 0 0 1.25rem;
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+.tz-enroll-modal__search label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #334155;
+  margin-bottom: 0.4rem;
+}
+
+.tz-enroll-modal__search input {
+  width: 100%;
+  padding: 0.65rem 0.85rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  outline: none;
+}
+
+.tz-enroll-modal__search input:focus {
+  border-color: #10b981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+}
+
+.tz-enroll-modal__results {
+  margin-top: 0.75rem;
+  min-height: 2rem;
+}
+
+.tz-enroll-student-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+}
+
+.tz-enroll-student-row strong {
+  display: block;
+  font-size: 0.9rem;
+  color: #0f172a;
+}
+
+.tz-enroll-student-row span {
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+.tz-enroll-add-btn {
+  padding: 0.4rem 0.85rem;
+  background: #10b981;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.tz-enroll-add-btn:hover:not(:disabled) {
+  background: #059669;
+}
+
+.tz-enroll-add-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.tz-enroll-modal__hint {
+  margin: 0.5rem 0;
+  color: #94a3b8;
+  font-size: 0.85rem;
+}
+
+.tz-enroll-modal__list {
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.tz-enroll-modal__list h4 {
+  margin: 0 0 0.75rem;
+  font-size: 0.95rem;
+  color: #334155;
+}
+
+.tz-enroll-modal__list ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+.tz-enroll-modal__list li {
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.tz-enroll-modal__list li span {
+  font-size: 0.9rem;
+  color: #0f172a;
+}
+
+.tz-enroll-modal__list li small {
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+.tz-enroll-modal__actions {
+  margin-top: 1.25rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.tz-enroll-close-btn {
+  padding: 0.55rem 1.25rem;
+  background: #f1f5f9;
+  color: #475569;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.tz-enroll-close-btn:hover {
+  background: #e2e8f0;
 }

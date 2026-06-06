@@ -1,50 +1,15 @@
-import { useEffect, useState } from "react";
-import { Link, Navigate, useNavigate, useSearchParams } from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { useGoogleLogin } from "@react-oauth/google";
-import { AUTH_STORAGE_KEY, clearAuth, resolveRole, setToken } from "../../auth/auth";
-import {
-  clearPendingRegisterRole,
-  hasCompletedOnboarding,
-  setPendingRegisterRole
-} from "../../auth/onboardingStorage";
+import { AUTH_STORAGE_KEY, resolveRole, setToken } from "../../auth/auth";
+import { navigateAfterAuth } from "../../auth/onboardingStorage";
 import { loginWithEmail, registerAccount, syncGoogleAccount } from "../../api/auth";
 import "./styles.css";
 
-const TEACHER_PENDING_MSG =
-  "Tài khoản giáo viên của bạn đang chờ quản trị viên phê duyệt. Bạn sẽ được thông báo khi được duyệt. Nhấn OK để chuyển đến trang đăng nhập.";
-
+const REGISTER_ROLE = "student";
 const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || "";
 
-const IMG_BY_ROLE = {
-  student: "/images/register/student.png",
-  teacher: "/images/register/teacher.png"
-};
-
-const ALT_BY_ROLE = {
-  student: "Học sinh bước qua cửa, chào đón hành trình học tập",
-  teacher: "Giáo viên đánh giá và theo dõi danh sách công việc"
-};
-
-const TITLE_BY_ROLE = {
-  student: "Bạn đăng ký với vai trò học sinh",
-  teacher: "Bạn đăng ký với vai trò giáo viên"
-};
-
-function IconArrowLeft() {
-  return (
-    <svg className="register-details__change-role-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
-      <path
-        d="M15 18l-6-6 6-6"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const IMG_STUDENT = "/images/register/student.png";
 
 function IconGoogle() {
   return (
@@ -96,7 +61,7 @@ function IconEyeClosed() {
   );
 }
 
-function GoogleRegisterButton({ role }) {
+function GoogleRegisterButton() {
   const navigate = useNavigate();
   const [googleErr, setGoogleErr] = useState(null);
 
@@ -119,9 +84,9 @@ function GoogleRegisterButton({ role }) {
           });
           const { token, user } = res;
           setToken(token);
-          
+
           const appRole = resolveRole(email) === "admin" ? "admin" : user.role;
-          
+
           sessionStorage.setItem(
             AUTH_STORAGE_KEY,
             JSON.stringify({
@@ -137,19 +102,7 @@ function GoogleRegisterButton({ role }) {
             })
           );
 
-          if (appRole === "admin") {
-            clearPendingRegisterRole();
-            navigate("/admin");
-          } else if (!hasCompletedOnboarding(email)) {
-            navigate("/onboarding");
-          } else {
-            clearPendingRegisterRole();
-            if (appRole === "teacher") {
-              navigate("/teacher/dashboard");
-            } else {
-              navigate("/dashboard");
-            }
-          }
+          navigateAfterAuth(navigate, { email, role: appRole });
         } catch (err) {
           if (err.code === "LOCAL_EMAIL_EXISTS") {
             setGoogleErr(
@@ -159,9 +112,7 @@ function GoogleRegisterButton({ role }) {
           } else {
             setGoogleErr(err.message || "Không thể đồng bộ tài khoản Google.");
           }
-          return;
         }
-
       } catch {
         setGoogleErr("Không lấy được thông tin tài khoản Google.");
       }
@@ -198,11 +149,10 @@ function GoogleRegisterPlaceholder() {
   );
 }
 
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 export default function RegisterDetailsPage() {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const raw = searchParams.get("role");
-  const role = raw === "teacher" || raw === "student" ? raw : null;
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -212,14 +162,6 @@ export default function RegisterDetailsPage() {
   const [showConfirmPw, setShowConfirmPw] = useState(false);
   const [formErr, setFormErr] = useState(null);
   const [submitting, setSubmitting] = useState(false);
-
-  useEffect(() => {
-    if (role) setPendingRegisterRole(role);
-  }, [role]);
-
-  if (!role) {
-    return <Navigate to="/register" replace />;
-  }
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -249,48 +191,29 @@ export default function RegisterDetailsPage() {
         email: em,
         name: nameTrim,
         password,
-        role
+        role: REGISTER_ROLE
       });
       const { user, token } = await loginWithEmail({ email: em, password });
       setToken(token);
-      
+
       const appRole = resolveRole(user.email) === "admin" ? "admin" : user.role;
-      
-      if (role === "teacher") {
-        clearAuth();
-        window.alert(TEACHER_PENDING_MSG);
-        clearPendingRegisterRole();
-        navigate("/login");
-        return;
-      }
-      const payload = {
-        provider: "email",
-        _id: user._id,
-        email: user.email,
-        name: user.name,
-        picture: user.picture || "",
-        avatar: user.avatar || "",
-        role: appRole,
-        accountType: user.role,
-        at: Date.now()
-      };
-      if (user.role === "teacher") {
-        payload.teacherApprovalStatus = user.teacherApprovalStatus ?? "approved";
-      }
-      sessionStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(payload));
-      if (appRole === "admin") {
-        clearPendingRegisterRole();
-        navigate("/admin");
-      } else if (!hasCompletedOnboarding(user.email)) {
-        navigate("/onboarding");
-      } else {
-        clearPendingRegisterRole();
-        if (appRole === "teacher") {
-          navigate("/teacher/dashboard");
-        } else {
-          navigate("/dashboard");
-        }
-      }
+
+      sessionStorage.setItem(
+        AUTH_STORAGE_KEY,
+        JSON.stringify({
+          provider: "email",
+          _id: user._id,
+          email: user.email,
+          name: user.name,
+          picture: user.picture || "",
+          avatar: user.avatar || "",
+          role: appRole,
+          accountType: user.role,
+          at: Date.now()
+        })
+      );
+
+      navigateAfterAuth(navigate, { email: user.email, role: appRole });
     } catch (err) {
       if (err.code === "GOOGLE_EMAIL" || err.code === "REGISTERED") {
         setFormErr(err.message);
@@ -314,16 +237,11 @@ export default function RegisterDetailsPage() {
       </header>
 
       <div className="register-details__title-wrap">
-        <h1 className="register-details__title">{TITLE_BY_ROLE[role]}</h1>
+        <h1 className="register-details__title">Đăng ký tài khoản học sinh</h1>
       </div>
 
       <div className="register-details__layout">
         <div className="register-details__form-wrap">
-          <Link className="register-details__change-role" to="/register">
-            <IconArrowLeft />
-            Thay thế vai trò
-          </Link>
-
           <form onSubmit={handleSubmit} noValidate>
             {formErr ? (
               <p className="register-details__form-error" role="alert">
@@ -436,11 +354,7 @@ export default function RegisterDetailsPage() {
             </button>
           </form>
 
-          {googleClientId ? (
-            <GoogleRegisterButton role={role} />
-          ) : (
-            <GoogleRegisterPlaceholder />
-          )}
+          {googleClientId ? <GoogleRegisterButton /> : <GoogleRegisterPlaceholder />}
 
           <p className="register-details__footer">
             Đã có tài khoản?{" "}
@@ -452,8 +366,8 @@ export default function RegisterDetailsPage() {
 
         <div className="register-details__art">
           <img
-            src={IMG_BY_ROLE[role]}
-            alt={ALT_BY_ROLE[role]}
+            src={IMG_STUDENT}
+            alt="Học sinh bước qua cửa, chào đón hành trình học tập"
             width={380}
             height={380}
             loading="eager"

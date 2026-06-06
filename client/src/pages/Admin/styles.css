@@ -591,3 +591,127 @@
     padding: 20px 16px;
   }
 }
+
+.admin-card__head--row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.admin-card__head--row .admin-actions {
+  margin-bottom: 0;
+}
+
+.admin-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.admin-modal {
+  background: #fff;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 440px;
+  padding: 24px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+}
+
+.admin-modal__title {
+  margin: 0 0 20px;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--tz-text);
+}
+
+.admin-modal__form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.admin-modal__label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--tz-text);
+}
+
+.admin-modal__input {
+  padding: 10px 12px;
+  border: 1px solid var(--tz-border);
+  border-radius: 10px;
+  font-size: 0.9375rem;
+  font-family: inherit;
+}
+
+.admin-modal__input:focus {
+  outline: none;
+  border-color: var(--tz-green);
+  box-shadow: 0 0 0 3px var(--tz-green-soft);
+}
+
+.admin-modal__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.admin-table__th-actions {
+  text-align: right;
+}
+
+.admin-icon-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.admin-btn-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.admin-btn-icon:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.admin-btn-icon--edit {
+  color: #64748b;
+}
+
+.admin-btn-icon--edit:hover:not(:disabled) {
+  background: #f1f5f9;
+  color: #1e293b;
+}
+
+.admin-btn-icon--lock {
+  color: #ef4444;
+  border-color: #fee2e2;
+  background: #fef2f2;
+}
+
+.admin-btn-icon--lock:hover:not(:disabled) {
+  background: #fee2e2;
+}

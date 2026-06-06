@@ -60,6 +60,41 @@ export function findEnrollmentConflict(newCourse, enrolledCourses) {
 
 export const COL_LABELS = ["Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7", "Chủ nhật"];
 
+/** Định dạng HH:mm → "18h" hoặc "19h30" (dùng cho mô tả lịch học). */
+export function formatTimeForSchedule(timeStr) {
+  if (!timeStr || typeof timeStr !== "string") return "";
+  const [h, m] = timeStr.split(":").map(Number);
+  if (!Number.isFinite(h) || !Number.isFinite(m)) return "";
+  if (m === 0) return `${h}h`;
+  return `${h}h${String(m).padStart(2, "0")}`;
+}
+
+/** col 0..6 → số thứ hiển thị (2..7, Chủ nhật = CN). */
+function colToDayLabel(col) {
+  if (col === 6) return "CN";
+  return String(col + 2);
+}
+
+/**
+ * Tạo mô tả lịch học ngắn từ các thứ và giờ đã chọn.
+ * VD: "Tối 2-4-6 | 18h - 19h30"
+ */
+export function buildScheduleDescription(sessionCols, startTime, endTime) {
+  if (!sessionCols?.length || !startTime || !endTime) return "";
+
+  const days = [...sessionCols].sort((a, b) => a - b).map(colToDayLabel).join("-");
+  const startFmt = formatTimeForSchedule(startTime);
+  const endFmt = formatTimeForSchedule(endTime);
+  if (!startFmt || !endFmt) return "";
+
+  const [h] = startTime.split(":").map(Number);
+  let period = "Tối";
+  if (h < 12) period = "Sáng";
+  else if (h < 17) period = "Chiều";
+
+  return `${period} ${days} | ${startFmt} - ${endFmt}`;
+}
+
 /** Thứ trong tuần (0=CN … 6=Thứ 7) của Date JS -> col 0..6 */
 export function jsDayToCol(d) {
   const js = d.getDay();

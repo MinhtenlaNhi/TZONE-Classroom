@@ -6,12 +6,13 @@ import CourseCategoryToeicBPage from "../pages/CourseCategoryToeicB";
 import CourseCategoryToeicSWPage from "../pages/CourseCategoryToeicSW";
 import AllCoursesPage from "../pages/AllCoursesPage";
 import CoursePublicDetailPage from "../pages/CoursePublicDetailPage";
+import SupportRequestPage from "../pages/SupportRequestPage";
+import WarrantyTermsPage from "../pages/WarrantyTermsPage";
 import LoginPage from "../pages/Login";
 import AdminTeachersPage from "../pages/Admin";
 import AdminCategoriesPage from "../pages/AdminCategories";
 import AdminCoursesPage from "../pages/AdminCourses";
 import AdminCourseFormPage from "../pages/AdminCourseFormPage";
-import OnboardingPage from "../pages/Onboarding";
 import RegisterPage from "../pages/Register";
 import RegisterDetailsPage from "../pages/RegisterDetails";
 import DashboardHome from "../pages/DashboardHome";
@@ -71,15 +72,15 @@ function AppRoutes() {
       <Route path="/courses/toeic-sw" element={<CourseCategoryToeicSWPage />} />
       <Route path="/courses" element={<AllCoursesPage />} />
       <Route path="/courses/:id" element={<CoursePublicDetailPage />} />
+      <Route path="/ho-tro-yeu-cau" element={<SupportRequestPage />} />
+      <Route path="/dieu-khoan-bao-hanh" element={<WarrantyTermsPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/forgot-password" element={<ForgotPasswordPage />} />
       <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
       <Route
         path="/onboarding"
         element={
-          <OnboardingRoute>
-            <OnboardingPage />
-          </OnboardingRoute>
+          <OnboardingRoute />
         }
       />
       <Route path="/register" element={<RegisterPage />} />

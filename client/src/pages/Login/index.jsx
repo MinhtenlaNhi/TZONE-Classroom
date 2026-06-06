@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useGoogleLogin } from "@react-oauth/google";
 import { AUTH_STORAGE_KEY, resolveRole, setToken } from "../../auth/auth";
 import { loginWithEmail, syncGoogleAccount } from "../../api/auth";
-import { clearPendingRegisterRole, hasCompletedOnboarding } from "../../auth/onboardingStorage";
+import { navigateAfterAuth } from "../../auth/onboardingStorage";
 import "./styles.css";
 
 const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || "";
@@ -91,19 +91,7 @@ function GoogleSignInButton() {
           }
           sessionStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(payload));
 
-          if (role === "admin" || role === "operation") {
-            clearPendingRegisterRole();
-            navigate("/admin");
-          } else if (!hasCompletedOnboarding(email)) {
-            navigate("/onboarding");
-          } else {
-            clearPendingRegisterRole();
-            if (role === "teacher") {
-              navigate("/teacher/dashboard");
-            } else {
-              navigate("/dashboard");
-            }
-          }
+          navigateAfterAuth(navigate, { email, role });
         } catch (err) {
           sessionStorage.removeItem(AUTH_STORAGE_KEY);
           if (err.code === "LOCAL_EMAIL_EXISTS") {
@@ -207,19 +195,7 @@ export default function LoginPage() {
         payload.teacherApprovalStatus = user.teacherApprovalStatus ?? "approved";
       }
       sessionStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(payload));
-      if (role === "admin" || role === "operation") {
-        clearPendingRegisterRole();
-        navigate("/admin");
-      } else if (!hasCompletedOnboarding(user.email)) {
-        navigate("/onboarding");
-      } else {
-        clearPendingRegisterRole();
-        if (role === "teacher") {
-          navigate("/teacher/dashboard");
-        } else {
-          navigate("/dashboard");
-        }
-      }
+      navigateAfterAuth(navigate, { email: user.email, role });
     } catch (err) {
       setFormErr(err.message || "Đăng nhập thất bại.");
     } finally {

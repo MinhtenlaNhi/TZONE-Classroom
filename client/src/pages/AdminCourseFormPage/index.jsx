@@ -7,7 +7,7 @@ import { fetchCategories } from "../../api/categories";
 import { fetchPublicInstructors } from "../../api/instructors";
 import { getAuth } from "../../auth/auth";
 import { dateToDatetimeLocalVN } from "../../utils/datetime";
-import { COL_LABELS } from "../../utils/courseSchedule";
+import { COL_LABELS, buildScheduleDescription } from "../../utils/courseSchedule";
 import "./AdminCourseForm.css";
 import { apiPath } from "../../api/base";
 
@@ -19,7 +19,16 @@ import { apiPath } from "../../api/base";
 const SESSIONS_BY_SLUG = {
   "tap-su": 12,
   "toeic-a": 27,
+  "toeic-b": 25,
   "toeic-sw": 28
+};
+
+/** Học phí mặc định theo danh mục (đồng bộ với trang giới thiệu từng loại khóa). */
+const PRICE_BY_SLUG = {
+  "tap-su": "2.500.000",
+  "toeic-a": "3.200.000",
+  "toeic-b": "3.500.000",
+  "toeic-sw": "3.800.000"
 };
 
 export default function AdminCourseFormPage() {
@@ -158,8 +167,28 @@ export default function AdminCourseFormPage() {
     }
   }, [formData.categoryRef, categories]);
 
+  // Tự điền "Học phí" theo danh mục được chọn.
+  useEffect(() => {
+    const cat = categories.find((c) => c.id === formData.categoryRef);
+    const autoPrice = cat ? PRICE_BY_SLUG[cat.slug] : undefined;
+    if (autoPrice != null && formData.price !== autoPrice) {
+      setFormData((prev) => ({ ...prev, price: autoPrice }));
+    }
+  }, [formData.categoryRef, categories]);
+
+  // Tự điền "Mô tả lịch học ngắn" khi chọn thứ / giờ học.
+  useEffect(() => {
+    const desc = buildScheduleDescription(
+      formData.sessionCols,
+      formData.startTime,
+      formData.endTime
+    );
+    setFormData((prev) => (prev.schedule === desc ? prev : { ...prev, schedule: desc }));
+  }, [formData.sessionCols, formData.startTime, formData.endTime]);
+
   const selectedCategory = categories.find((c) => c.id === formData.categoryRef);
   const autoSessions = selectedCategory ? SESSIONS_BY_SLUG[selectedCategory.slug] : undefined;
+  const autoPrice = selectedCategory ? PRICE_BY_SLUG[selectedCategory.slug] : undefined;
 
   const handleChange = (e) => {
     const { name, value, type, checked, files } = e.target;
@@ -333,6 +362,11 @@ export default function AdminCourseFormPage() {
                     <input type="text" name="price" value={formData.price} onChange={handleChange} placeholder="VD: 3.200.000" />
                     <span className="suffix">VNĐ</span>
                   </div>
+                  {autoPrice != null && (
+                    <small className="tz-field-hint">
+                      Học phí mặc định của danh mục "{selectedCategory?.name}".
+                    </small>
+                  )}
                 </div>
               </div>
             </div>

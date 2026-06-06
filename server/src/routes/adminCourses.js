@@ -4,6 +4,9 @@ const path = require("path");
 const fs = require("fs");
 const Course = require("../models/Course");
 const Category = require("../models/Category");
+const Enrollment = require("../models/Enrollment");
+const User = require("../models/User");
+const { manualEnrollStudent } = require("../utils/coursePurchase");
 const { isDbReady } = require("../db");
 const { authMiddleware } = require("../middlewares/auth");
 const { isStaff } = require("../middlewares/role");
@@ -97,7 +100,7 @@ router.post("/courses-list", async (req, res) => {
 });
 
 // --- NEW JWT PROTECTED ROUTES ---
-router.use("/v2/courses", authMiddleware, isStaff);
+router.use("/v2", authMiddleware, isStaff);
 
 /** GET /api/admin/v2/courses - Lấy tất cả khóa học */
 router.get("/v2/courses", async (req, res) => {
@@ -270,6 +273,127 @@ router.put("/v2/courses/:id", upload.single("thumbnail"), async (req, res) => {
   } catch (e) {
     console.error(e);
     return res.status(500).json({ success: false, message: "Lỗi máy chủ" });
+  }
+});
+
+/** GET /api/admin/v2/students/search - Tìm học viên để ghi danh thủ công */
+router.get("/v2/students/search", async (req, res) => {
+  if (!isDbReady()) return dbUnavailable(res);
+  try {
+    const search = String(req.query.search || "").trim();
+    if (!search || search.length < 2) {
+      return res.json({ success: true, students: [] });
+    }
+
+    const students = await User.find({
+      role: "student",
+      isBlocked: { $ne: true },
+      $or: [
+        { email: { $regex: search, $options: "i" } },
+        { name: { $regex: search, $options: "i" } }
+      ]
+    })
+      .select("name email phone avatar")
+      .limit(10)
+      .lean();
+
+    return res.json({ success: true, students });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ success: false, message: "Lỗi tìm kiếm học viên." });
+  }
+});
+
+/** GET /api/admin/v2/courses/:courseId/enrollments - Danh sách học viên trong khóa */
+router.get("/v2/courses/:courseId/enrollments", async (req, res) => {
+  if (!isDbReady()) return dbUnavailable(res);
+  try {
+    const course = await Course.findById(req.params.courseId);
+    if (!course) {
+      return res.status(404).json({ success: false, message: "Không tìm thấy khóa học." });
+    }
+
+    const enrollments = await Enrollment.find({
+      course: course._id,
+      isTrial: false
+    })
+      .populate("user", "name email phone avatar")
+      .sort({ enrolledAt: -1 })
+      .lean();
+
+    return res.json({ success: true, enrollments, total: enrollments.length });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ success: false, message: "Lỗi lấy danh sách học viên." });
+  }
+});
+
+/** POST /api/admin/v2/courses/:courseId/enrollments - Ghi danh học viên (không cần mua) */
+router.post("/v2/courses/:courseId/enrollments", async (req, res) => {
+  if (!isDbReady()) return dbUnavailable(res);
+  try {
+    const course = await Course.findById(req.params.courseId);
+    if (!course) {
+      return res.status(404).json({ success: false, message: "Không tìm thấy khóa học." });
+    }
+
+    const { userId, email } = req.body || {};
+    let student = null;
+
+    if (userId) {
+      student = await User.findById(userId);
+    } else if (email) {
+      student = await User.findOne({ email: String(email).trim().toLowerCase() });
+    } else {
+      return res.status(400).json({
+        success: false,
+        message: "Vui lòng cung cấp userId hoặc email học viên."
+      });
+    }
+
+    if (!student) {
+      return res.status(404).json({ success: false, message: "Không tìm thấy học viên." });
+    }
+    if (student.role !== "student") {
+      return res.status(400).json({
+        success: false,
+        message: "Chỉ có thể ghi danh tài khoản học viên."
+      });
+    }
+    if (student.isBlocked) {
+      return res.status(400).json({
+        success: false,
+        message: "Tài khoản học viên đang bị khóa."
+      });
+    }
+
+    const result = await manualEnrollStudent(Enrollment, {
+      userId: student._id,
+      courseId: course._id
+    });
+
+    if (!result.ok) {
+      return res.status(409).json({ success: false, message: result.message });
+    }
+
+    const enrollment = await Enrollment.findById(result.enrollment._id)
+      .populate("user", "name email phone avatar")
+      .lean();
+
+    return res.status(201).json({
+      success: true,
+      message: `Đã ghi danh ${student.name} vào khóa "${course.title}".`,
+      enrollment
+    });
+  } catch (e) {
+    console.error(e);
+    if (e.code === 11000) {
+      return res.status(409).json({
+        success: false,
+        message: "Học viên đã được ghi danh vào khóa học này."
+      });
+    }
+    return res.status(500).json({ success: false, message: "Lỗi ghi danh học viên." });
   }
 });
 

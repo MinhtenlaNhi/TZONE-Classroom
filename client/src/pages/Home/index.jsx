@@ -101,7 +101,7 @@ const courses = [
     image: "/images/course-library-student.png"
   },
   {
-    id: 3, levelLabel: "TOEIC B", title: "TOEIC B S17", schedule: "Tối 3-5-7 | 17h30-19h30", price: "3.000.000đ",
+    id: 3, levelLabel: "TOEIC B", title: "TOEIC B S17", schedule: "Tối 3-5-7 | 17h30-19h30", price: "3.500.000đ",
     startDate: "10/05", instructor: { name: "Ms. Minh Hạnh", avatar: "https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?auto=format&fit=crop&w=120&q=80" },
     image: "/images/course-group-study.png"
   },

@@ -129,9 +129,14 @@ router.post("/register", async (req, res) => {
     if (!em || !nameTrim || !password) {
       return res.status(400).json({ success: false, message: "Vui lòng điền đủ thông tin." });
     }
-    if (!["student", "teacher"].includes(role)) {
-      return res.status(400).json({ success: false, message: "Vai trò không hợp lệ." });
+    // Đăng ký công khai chỉ tạo tài khoản học sinh (giáo viên do admin tạo/duyệt).
+    if (role === "teacher") {
+      return res.status(400).json({
+        success: false,
+        message: "Đăng ký giáo viên không khả dụng. Vui lòng liên hệ trung tâm để được cấp tài khoản."
+      });
     }
+    const registerRole = "student";
     if (password.length < 6) {
       return res.status(400).json({ success: false, message: "Mật khẩu cần ít nhất 6 ký tự." });
     }
@@ -158,8 +163,7 @@ router.post("/register", async (req, res) => {
       name: nameTrim,
       passwordHash,
       authProvider: "local",
-      role,
-      teacherApprovalStatus: role === "teacher" ? "pending" : undefined
+      role: registerRole
     });
 
     const token = generateToken(user);
