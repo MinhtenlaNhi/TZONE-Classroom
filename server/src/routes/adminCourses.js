@@ -107,7 +107,25 @@ router.get("/v2/courses", async (req, res) => {
   if (!isDbReady()) return dbUnavailable(res);
   try {
     const courses = await Course.find({}).populate("categoryRef", "name slug").sort({ createdAt: -1 }).lean();
-    return res.json({ success: true, courses });
+    const courseIds = courses.map((course) => course._id);
+
+    const enrollmentCounts = courseIds.length
+      ? await Enrollment.aggregate([
+          { $match: { course: { $in: courseIds } } },
+          { $group: { _id: "$course", count: { $sum: 1 } } }
+        ])
+      : [];
+
+    const countByCourseId = Object.fromEntries(
+      enrollmentCounts.map((row) => [String(row._id), row.count])
+    );
+
+    const coursesWithCounts = courses.map((course) => ({
+      ...course,
+      enrollmentCount: countByCourseId[String(course._id)] || 0
+    }));
+
+    return res.json({ success: true, courses: coursesWithCounts });
   } catch (e) {
     console.error(e);
     return res.status(500).json({ success: false, message: "Lỗi máy chủ" });
@@ -430,10 +448,20 @@ router.post("/v2/courses/:courseId/enrollments", async (req, res) => {
 router.delete("/v2/courses/:id", async (req, res) => {
   if (!isDbReady()) return dbUnavailable(res);
   try {
-    const doc = await Course.findByIdAndDelete(req.params.id);
-    if (!doc) {
+    const course = await Course.findById(req.params.id);
+    if (!course) {
       return res.status(404).json({ success: false, message: "Không tìm thấy khóa học" });
     }
+
+    const enrollmentCount = await Enrollment.countDocuments({ course: course._id });
+    if (enrollmentCount >= 1) {
+      return res.status(409).json({
+        success: false,
+        message: `Không thể xóa khóa học vì đang có ${enrollmentCount} học viên đang học (kể cả học thử).`
+      });
+    }
+
+    await Course.findByIdAndDelete(course._id);
     return res.json({ success: true, message: "Xóa khóa học thành công" });
   } catch (e) {
     console.error(e);

@@ -15,7 +15,25 @@ router.get("/", async (req, res) => {
   if (!isDbReady()) return res.status(503).json({ success: false, message: "DB chưa sẵn sàng" });
   try {
     const categories = await Category.find({}).sort({ order: 1, createdAt: -1 }).lean();
-    return res.json({ success: true, categories });
+    const categoryIds = categories.map((category) => category._id);
+
+    const publishedCounts = categoryIds.length
+      ? await Course.aggregate([
+          { $match: { categoryRef: { $in: categoryIds }, isPublished: true } },
+          { $group: { _id: "$categoryRef", count: { $sum: 1 } } }
+        ])
+      : [];
+
+    const countByCategoryId = Object.fromEntries(
+      publishedCounts.map((row) => [String(row._id), row.count])
+    );
+
+    const categoriesWithCounts = categories.map((category) => ({
+      ...category,
+      publishedCourseCount: countByCategoryId[String(category._id)] || 0
+    }));
+
+    return res.json({ success: true, categories: categoriesWithCounts });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ success: false, message: "Lỗi máy chủ" });
@@ -81,12 +99,12 @@ router.delete("/:id", async (req, res) => {
   try {
     const { id } = req.params;
     
-    // Kiểm tra xem có khóa học nào đang dùng danh mục này không
-    const coursesCount = await Course.countDocuments({ categoryRef: id });
-    if (coursesCount > 0) {
-      return res.status(400).json({ 
-        success: false, 
-        message: `Không thể xóa vì đang có ${coursesCount} khóa học thuộc danh mục này` 
+    // Chỉ chặn xóa khi có khóa học đã xuất bản thuộc danh mục này.
+    const publishedCount = await Course.countDocuments({ categoryRef: id, isPublished: true });
+    if (publishedCount >= 1) {
+      return res.status(409).json({
+        success: false,
+        message: `Không thể xóa danh mục vì đang có ${publishedCount} khóa học đã xuất bản thuộc danh mục này.`
       });
     }
 
