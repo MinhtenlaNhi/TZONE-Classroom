@@ -7,6 +7,7 @@ import PublicFooter from "../../components/PublicFooter";
 import "../../pages/Home/styles.css";
 import "./AllCourses.css";
 import { apiPath } from "../../api/base";
+import { displayPrice } from "../../utils/price";
 import { addToCart, fetchCart } from "../../api/cartApi";
 import { getAuth } from "../../auth/auth";
 import { toast } from "react-toastify";
@@ -371,7 +372,7 @@ export default function AllCoursesPage() {
                           <span>CT3102</span>
                         </div>
                         <div className="tz-cc-price">
-                          {course.price ? (course.price.toString().includes('đ') ? course.price : `${course.price.toLocaleString()}đ`) : 'Miễn phí'}
+                          {displayPrice(course.price)}
                         </div>
                       </div>
                     </Link>

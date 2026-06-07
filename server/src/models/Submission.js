@@ -35,6 +35,9 @@ const SubmissionSchema = new mongoose.Schema({
   },
   teacherComment: {
     type: String
+  },
+  correctedFileUrl: {
+    type: String
   }
 }, {
   timestamps: true

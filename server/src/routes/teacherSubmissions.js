@@ -4,6 +4,7 @@ const Submission = require("../models/Submission");
 const Course = require("../models/Course");
 const { authMiddleware } = require("../middlewares/auth");
 const { findStudentSubmissions } = require("../utils/submissionHelpers");
+const { upload } = require("../utils/cloudinary");
 
 const router = express.Router();
 
@@ -60,18 +61,23 @@ router.get("/:id/submissions", authMiddleware, isTeacher, verifyAssignmentOwners
   }
 });
 
-// 2. PUT /api/teacher/submissions/:id/grade - Chấm điểm và nhận xét (id ở đây là submissionId)
-router.put("/:id/grade", authMiddleware, isTeacher, verifyAssignmentOwnership, async (req, res) => {
+// 2. PUT /api/teacher/submissions/:id/grade - Chấm điểm, nhận xét và file đã sửa lỗi (id ở đây là submissionId)
+router.put("/:id/grade", authMiddleware, isTeacher, verifyAssignmentOwnership, upload.single("correctedFile"), async (req, res) => {
   try {
-    const { score, teacherComment } = req.body;
-    
-    if (score < 0 || score > 100) {
+    const score = Number(req.body.score);
+    const teacherComment = req.body.teacherComment || "";
+
+    if (Number.isNaN(score) || score < 0 || score > 100) {
       return res.status(400).json({ success: false, message: "Điểm không hợp lệ." });
     }
 
     req.submission.score = score;
     req.submission.teacherComment = teacherComment;
     req.submission.status = "graded";
+
+    if (req.file?.path) {
+      req.submission.correctedFileUrl = req.file.path;
+    }
 
     await req.submission.save();
 

@@ -493,6 +493,24 @@
 .tz-ap-grade-comment strong { display: block; margin-bottom: 8px; color: #334155; }
 .tz-ap-grade-comment p { margin: 0; color: #0f172a; font-size: 1rem; line-height: 1.5; font-style: italic; }
 
+.tz-ap-corrected-file {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 32px;
+  padding: 12px 20px;
+  background: #ecfdf5;
+  color: #059669;
+  border-radius: 8px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.tz-ap-corrected-file:hover {
+  background: #d1fae5;
+}
+
 .tz-ap-submission-view h4 {
   font-size: 1.1rem;
   font-weight: 800;

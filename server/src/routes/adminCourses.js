@@ -149,6 +149,17 @@ router.post("/v2/courses", upload.single("thumbnail"), async (req, res) => {
       instructorRef: raw.instructorRef || null
     };
 
+    if (raw.categoryRef) {
+      const category = await Category.findById(raw.categoryRef).select("slug").lean();
+      if (category) {
+        docData.categoryId = category.slug;
+        docData.categoryRef = category._id;
+        if (BADGE_BY_CAT[category.slug]) {
+          docData.badge = BADGE_BY_CAT[category.slug];
+        }
+      }
+    }
+
     if (sessions) {
       docData.sessions = sessions;
     }
@@ -233,8 +244,15 @@ router.put("/v2/courses/:id", upload.single("thumbnail"), async (req, res) => {
       instructorRef: raw.instructorRef || undefined
     };
 
-    if (raw.categoryId) updateData.categoryId = raw.categoryId;
-    if (raw.categoryRef) updateData.categoryRef = raw.categoryRef;
+    if (raw.categoryRef) {
+      const category = await Category.findById(raw.categoryRef).select("slug").lean();
+      if (category) {
+        updateData.categoryId = category.slug;
+        updateData.categoryRef = category._id;
+        updateData.badge = BADGE_BY_CAT[category.slug] || existing.badge;
+      }
+    }
+
     if (sessions) updateData.sessions = sessions;
     
     if (req.file) {
@@ -269,7 +287,18 @@ router.put("/v2/courses/:id", upload.single("thumbnail"), async (req, res) => {
       return res.status(404).json({ success: false, message: "Không tìm thấy khóa học" });
     }
 
-    return res.json({ success: true, message: "Cập nhật thành công", course: doc });
+    let syncedLessons = 0;
+    try {
+      syncedLessons = await seedCurriculumForCourse(doc);
+    } catch (seedErr) {
+      console.error("[adminCourses] Đồng bộ lộ trình bài học thất bại:", seedErr.message);
+    }
+
+    return res.json({
+      success: true,
+      message: syncedLessons > 0 ? "Cập nhật thành công và đã đồng bộ lộ trình bài học." : "Cập nhật thành công",
+      course: doc
+    });
   } catch (e) {
     console.error(e);
     return res.status(500).json({ success: false, message: "Lỗi máy chủ" });

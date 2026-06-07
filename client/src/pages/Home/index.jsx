@@ -8,6 +8,7 @@ import CourseCategoryToeicSWPage from "../CourseCategoryToeicSW";
 import PublicHeader from "../../components/PublicHeader";
 import PublicFooter from "../../components/PublicFooter";
 import { getEnrollmentStatus, getEnrollmentClosedButtonLabel } from "../../utils/enrollment";
+import { displayPrice } from "../../utils/price";
 
 /**
  * Ưu tiên khóa "đang mở" và "sắp mở" (chưa đóng đăng ký) lên trước,
@@ -189,7 +190,7 @@ export default function HomePage() {
     schedule: c.schedule || "Linh hoạt",
     duration: c.duration || "2 tháng",
     sessions: c.totalSessions ? `${c.totalSessions} buổi` : "24 buổi",
-    price: c.price ? (c.price.toString().includes('đ') ? c.price : `${Number(c.price).toLocaleString()}đ`) : "2.500.000đ",
+    price: displayPrice(c.price, "2.500.000đ"),
     startDate: c.startDate || "10/06/2024",
     enrollmentOpenDate: c.enrollmentOpenDate,
     enrollmentCloseDate: c.enrollmentCloseDate,

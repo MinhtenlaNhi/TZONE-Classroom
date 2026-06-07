@@ -88,9 +88,16 @@ export async function fetchLessonSubmissions(lessonId) {
   return apiFetchJson(apiPath(`/api/teacher/lessons/${lessonId}/submissions`));
 }
 
-export async function gradeSubmission(submissionId, score, teacherComment) {
+export async function gradeSubmission(submissionId, { score, teacherComment, correctedFile } = {}) {
+  const formData = new FormData();
+  formData.append("score", String(score));
+  formData.append("teacherComment", teacherComment || "");
+  if (correctedFile) {
+    formData.append("correctedFile", correctedFile);
+  }
+
   return apiFetchJson(apiPath(`/api/teacher/submissions/${submissionId}/grade`), {
     method: "PUT",
-    body: JSON.stringify({ score, teacherComment })
+    body: formData
   });
 }

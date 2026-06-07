@@ -7,6 +7,7 @@ import { fetchCourseReviews } from "../../api/reviewsApi";
 import { getAuth } from "../../auth/auth";
 import StarRating from "../../components/StarRating";
 import { getEnrollmentStatus, getEnrollmentClosedButtonLabel, isEnrollmentOpen } from "../../utils/enrollment";
+import { displayPrice } from "../../utils/price";
 import PublicHeader from "../../components/PublicHeader";
 import PublicFooter from "../../components/PublicFooter";
 import "../../pages/Home/styles.css";
@@ -264,7 +265,7 @@ export default function CoursePublicDetailPage() {
 
               <div className="cp-buy-details">
                 <div className="cp-buy-price">
-                  {course.price ? (course.price.toString().includes('đ') ? course.price : `${Number(course.price).toLocaleString()}đ`) : "Miễn phí"}
+                  {displayPrice(course.price)}
                 </div>
 
                 <ul className="cp-buy-features">

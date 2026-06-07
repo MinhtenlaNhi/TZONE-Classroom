@@ -12,6 +12,7 @@ import { fetchDashboardStats } from "../../api/adminApi";
 import { getAuth } from "../../auth/auth";
 import "./AdminCourses.css";
 import { apiPath } from "../../api/base";
+import { displayPrice } from "../../utils/price";
 
 export default function AdminCoursesPage() {
   const auth = getAuth();
@@ -361,7 +362,7 @@ export default function AdminCoursesPage() {
                         )}
                         <div className="tz-course-info">
                           <strong>{course.title}</strong>
-                          <span>{course.price ? (course.price.toString().includes('đ') ? course.price : `${course.price.toLocaleString()}đ`) : 'Khóa học miễn phí'}</span>
+                          <span>{displayPrice(course.price, "Khóa học miễn phí")}</span>
                         </div>
                       </div>
                     </td>

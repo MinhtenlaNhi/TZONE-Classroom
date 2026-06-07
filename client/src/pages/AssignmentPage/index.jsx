@@ -262,6 +262,17 @@ export default function AssignmentPage() {
               )}
             </div>
           )}
+
+          {submission.status === 'graded' && submission.correctedFileUrl && (
+            <a
+              href={`${apiPath(submission.correctedFileUrl)}`}
+              target="_blank"
+              rel="noreferrer"
+              className="tz-ap-corrected-file"
+            >
+              <IconUpload /> Tải file đã sửa lỗi từ giảng viên
+            </a>
+          )}
           
           <div className="tz-ap-submission-view">
             <h4>Bài làm của bạn:</h4>
