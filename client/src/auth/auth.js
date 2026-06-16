@@ -11,18 +11,6 @@ export function resolveRole(email) {
   return ADMIN_EMAILS.has(e) ? "admin" : "user";
 }
 
-/** Lưu JWT token */
-export function setToken(token) {
-  if (token) {
-    localStorage.setItem(TOKEN_STORAGE_KEY, token);
-  }
-}
-
-/** Lấy JWT token */
-export function getToken() {
-  return localStorage.getItem(TOKEN_STORAGE_KEY) || null;
-}
-
 /** Giải mã payload JWT (không xác thực chữ ký — chỉ để đọc role/email phía client). */
 function decodeJwtPayload(token) {
   try {
@@ -35,13 +23,47 @@ function decodeJwtPayload(token) {
   }
 }
 
-/** Role thực tế theo JWT (đồng bộ với CSDL tại thời điểm đăng nhập). */
-export function getTokenRole() {
-  const payload = decodeJwtPayload(getToken());
-  return payload?.role || null;
+function getTokenPayload() {
+  return decodeJwtPayload(getToken());
 }
 
-/** Lưu thông tin user (JSON) vào session */
+/**
+ * Lưu JWT token theo từng tab (sessionStorage).
+ * Tránh trường hợp mở song song nhiều tab với role khác nhau bị ghi đè lẫn nhau
+ * khi token nằm chung trong localStorage.
+ */
+export function setToken(token) {
+  if (token) {
+    sessionStorage.setItem(TOKEN_STORAGE_KEY, token);
+  } else {
+    sessionStorage.removeItem(TOKEN_STORAGE_KEY);
+  }
+  // Dọn token legacy dùng chung toàn trình duyệt (phiên bản cũ).
+  localStorage.removeItem(TOKEN_STORAGE_KEY);
+}
+
+/** Lấy JWT token của tab hiện tại. */
+export function getToken() {
+  const sessionToken = sessionStorage.getItem(TOKEN_STORAGE_KEY);
+  if (sessionToken) return sessionToken;
+
+  // Migration một lần cho tab đang mở: token cũ trong localStorage → sessionStorage.
+  const legacyToken = localStorage.getItem(TOKEN_STORAGE_KEY);
+  if (legacyToken) {
+    sessionStorage.setItem(TOKEN_STORAGE_KEY, legacyToken);
+    localStorage.removeItem(TOKEN_STORAGE_KEY);
+    return legacyToken;
+  }
+
+  return null;
+}
+
+/** Role thực tế theo JWT của tab hiện tại. */
+export function getTokenRole() {
+  return getTokenPayload()?.role || null;
+}
+
+/** Lưu thông tin user (JSON) vào session của tab hiện tại. */
 export function setAuth(data) {
   if (data) {
     sessionStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(data));
@@ -55,16 +77,17 @@ export function getAuth() {
     const data = JSON.parse(raw);
     if (!data?.email) return null;
 
-    // Nguồn chân lý cho quyền là JWT (khớp role trong CSDL lúc đăng nhập).
-    // Tránh trường hợp session cũ trong sessionStorage còn role sai (vd: student
-    // lọt vào khu vực /admin) trong khi server vẫn trả 403 theo role thật.
-    const tokenRole = getTokenRole();
-    if (tokenRole) {
-      data.role = tokenRole;
+    const sessionEmail = data.email.toLowerCase().trim();
+    const tokenPayload = getTokenPayload();
+    const tokenEmail = tokenPayload?.email?.toLowerCase?.().trim();
+
+    // Chỉ đồng bộ role từ JWT khi token thuộc đúng tài khoản của tab này.
+    if (tokenPayload && tokenEmail && tokenEmail === sessionEmail && tokenPayload.role) {
+      data.role = tokenPayload.role;
     }
 
     // Luôn đồng bộ từ ADMIN_EMAILS — tránh session cũ còn role sai sau khi đổi cấu hình.
-    if (ADMIN_EMAILS.has(data.email?.toLowerCase())) {
+    if (ADMIN_EMAILS.has(sessionEmail)) {
       data.role = "admin";
     }
     return data;
@@ -75,6 +98,7 @@ export function getAuth() {
 
 export function clearAuth() {
   sessionStorage.removeItem(AUTH_STORAGE_KEY);
+  sessionStorage.removeItem(TOKEN_STORAGE_KEY);
   localStorage.removeItem(TOKEN_STORAGE_KEY);
 }
 
