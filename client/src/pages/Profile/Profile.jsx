@@ -205,7 +205,7 @@ export default function ProfilePage({ variant = "student" }) {
               onChange={handleAvatarChange}
             />
           </label>
-          <span className="avatar-info">JPG, PNG, GIF, WebP — tối đa 5MB</span>
+          <span className="avatar-info">JPG, PNG, GIF, WebP</span>
           {user?.role && (
             <span className={`profile-role-badge ${user.role}`}>
               {roleLabels[user.role] || user.role}

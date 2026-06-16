@@ -241,6 +241,7 @@
 .btn-checkout {
   display: block;
   width: 100%;
+  box-sizing: border-box;
   text-align: center;
   background: #10b981;
   color: white;

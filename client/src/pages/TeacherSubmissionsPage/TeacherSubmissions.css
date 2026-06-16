@@ -319,6 +319,7 @@
   justify-content: center;
   z-index: 1000;
   padding: 20px;
+  overflow-y: auto;
 }
 
 .tz-ts-modal {
@@ -326,8 +327,19 @@
   border-radius: 16px;
   width: 100%;
   max-width: 600px;
+  max-height: calc(100vh - 40px);
   box-shadow: 0 20px 40px rgba(0,0,0,0.1);
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+
+.tz-ts-modal-form {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
 }
 
 .tz-ts-modal-header {
@@ -359,6 +371,16 @@
 
 .tz-ts-modal-body {
   padding: 24px;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+}
+
+.tz-ts-modal-footer {
+  padding: 16px 24px 24px;
+  border-top: 1px solid #e2e8f0;
+  background: #fff;
+  flex-shrink: 0;
 }
 
 /* Student Work */
@@ -455,6 +477,7 @@
 
 .tz-ts-comment-input {
   width: 100%;
+  box-sizing: border-box;
   padding: 16px;
   border: 1px solid #cbd5e1;
   border-radius: 8px;
@@ -468,6 +491,7 @@
 
 .tz-ts-btn-submit.full-width {
   width: 100%;
+  box-sizing: border-box;
   background: #00a260;
   color: white;
   border: none;

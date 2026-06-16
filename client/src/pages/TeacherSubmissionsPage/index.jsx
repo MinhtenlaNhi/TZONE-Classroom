@@ -239,84 +239,88 @@ export default function TeacherSubmissionsPage() {
                 <h2>Chấm bài: {activeSub?.studentRef?.name}</h2>
                 <button onClick={() => setShowGradeModal(false)} className="tz-ts-modal-close">&times;</button>
               </div>
-              <div className="tz-ts-modal-body">
-                {activeSub?.type === "essay" && (
-                  <div className="tz-ts-student-work">
-                    <h4>Nội dung học viên làm bài:</h4>
-                    {activeSub.textContent ? (
-                      <div className="tz-ts-work-text">{activeSub.textContent}</div>
-                    ) : (
-                      <div className="tz-ts-work-empty">Học viên không nhập văn bản.</div>
-                    )}
-                    {activeSub.fileUrl && (
-                      <a href={`${apiPath(activeSub.fileUrl)}`} target="_blank" rel="noreferrer" className="tz-ts-work-file">
-                        <IconFileText /> Tải file đính kèm của học viên
-                      </a>
-                    )}
-                  </div>
-                )}
-                
-                <form onSubmit={handleGrade} className="tz-ts-grade-form">
-                  <div className="tz-ts-form-group">
-                    <label>Chấm điểm (Thang 100)</label>
-                    <div className="tz-ts-score-input-wrapper">
-                      <input 
-                        type="number" 
-                        min="0" 
-                        max="100" 
-                        required 
-                        value={score} 
-                        onChange={e => setScore(e.target.value)} 
-                        className="tz-ts-score-input"
-                      />
-                      <span className="tz-ts-score-suffix">/ 100</span>
-                    </div>
-                  </div>
-                  <div className="tz-ts-form-group">
-                    <label>Nhận xét cho học viên</label>
-                    <textarea 
-                      rows="4" 
-                      value={comment} 
-                      onChange={e => setComment(e.target.value)}
-                      placeholder="Góp ý để học viên cải thiện (không bắt buộc)..."
-                      className="tz-ts-comment-input"
-                    ></textarea>
-                  </div>
+              <form onSubmit={handleGrade} className="tz-ts-modal-form">
+                <div className="tz-ts-modal-body">
                   {activeSub?.type === "essay" && (
-                    <div className="tz-ts-form-group">
-                      <label>File đã sửa lỗi (Word/PDF)</label>
-                      {activeSub.correctedFileUrl && !correctedFile && (
-                        <a
-                          href={`${apiPath(activeSub.correctedFileUrl)}`}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="tz-ts-work-file tz-ts-corrected-current"
-                        >
-                          <IconFileText /> Xem file đã sửa hiện tại
+                    <div className="tz-ts-student-work">
+                      <h4>Nội dung học viên làm bài:</h4>
+                      {activeSub.textContent ? (
+                        <div className="tz-ts-work-text">{activeSub.textContent}</div>
+                      ) : (
+                        <div className="tz-ts-work-empty">Học viên không nhập văn bản.</div>
+                      )}
+                      {activeSub.fileUrl && (
+                        <a href={`${apiPath(activeSub.fileUrl)}`} target="_blank" rel="noreferrer" className="tz-ts-work-file">
+                          <IconFileText /> Tải file đính kèm của học viên
                         </a>
                       )}
-                      <div className="tz-ts-file-upload">
-                        <input
-                          type="file"
-                          id="corrected-file-upload"
-                          className="tz-ts-file-input"
-                          accept=".doc,.docx,.pdf,.txt,image/*"
-                          onChange={(e) => {
-                            const file = e.target.files[0];
-                            setCorrectedFile(file || null);
-                            setCorrectedFileName(file ? file.name : "");
-                          }}
-                        />
-                        <label htmlFor="corrected-file-upload" className="tz-ts-file-label">
-                          <IconFileText /> {correctedFileName || "Chọn file đã sửa lỗi"}
-                        </label>
-                      </div>
-                      <p className="tz-ts-file-hint">Tải lên bài làm đã chỉnh sửa để học viên tải về (không bắt buộc).</p>
                     </div>
                   )}
+
+                  <div className="tz-ts-grade-form">
+                    <div className="tz-ts-form-group">
+                      <label>Chấm điểm (Thang 100)</label>
+                      <div className="tz-ts-score-input-wrapper">
+                        <input
+                          type="number"
+                          min="0"
+                          max="100"
+                          required
+                          value={score}
+                          onChange={e => setScore(e.target.value)}
+                          className="tz-ts-score-input"
+                        />
+                        <span className="tz-ts-score-suffix">/ 100</span>
+                      </div>
+                    </div>
+                    <div className="tz-ts-form-group">
+                      <label>Nhận xét cho học viên</label>
+                      <textarea
+                        rows="4"
+                        value={comment}
+                        onChange={e => setComment(e.target.value)}
+                        placeholder="Góp ý để học viên cải thiện (không bắt buộc)..."
+                        className="tz-ts-comment-input"
+                      ></textarea>
+                    </div>
+                    {activeSub?.type === "essay" && (
+                      <div className="tz-ts-form-group">
+                        <label>File đã sửa lỗi (Word/PDF)</label>
+                        {activeSub.correctedFileUrl && !correctedFile && (
+                          <a
+                            href={`${apiPath(activeSub.correctedFileUrl)}`}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="tz-ts-work-file tz-ts-corrected-current"
+                          >
+                            <IconFileText /> Xem file đã sửa hiện tại
+                          </a>
+                        )}
+                        <div className="tz-ts-file-upload">
+                          <input
+                            type="file"
+                            id="corrected-file-upload"
+                            className="tz-ts-file-input"
+                            accept=".doc,.docx,.pdf,.txt,image/*"
+                            onChange={(e) => {
+                              const file = e.target.files[0];
+                              setCorrectedFile(file || null);
+                              setCorrectedFileName(file ? file.name : "");
+                            }}
+                          />
+                          <label htmlFor="corrected-file-upload" className="tz-ts-file-label">
+                            <IconFileText /> {correctedFileName || "Chọn file đã sửa lỗi"}
+                          </label>
+                        </div>
+                        <p className="tz-ts-file-hint">Tải lên bài làm đã chỉnh sửa để học viên tải về (không bắt buộc).</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <div className="tz-ts-modal-footer">
                   <button type="submit" className="tz-ts-btn-submit full-width">Lưu Điểm</button>
-                </form>
-              </div>
+                </div>
+              </form>
             </div>
           </div>
         )}
